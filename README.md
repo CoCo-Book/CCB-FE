@@ -24,40 +24,6 @@
 
 ---
 
-## 🛠️ 프로젝트 실행 방법
-
-1. 레포지토리 클론
-```bash
-git clone https://github.com/your-org/kkokkobook-fe.git
-cd kkokkobook-fe
-```
-
-2. 의존성 설치
-```bash
-npm install
-```
-
-3. 앱 실행 (Expo 사용 시)
-```bash
-npx expo start
-```
-
----
-
-## 📁 폴더 구조 (예시)
-```
-kkokkobook-fe/
-├── assets/         # 이미지 및 리소스
-├── components/     # 공통 컴포넌트
-├── screens/        # 주요 화면
-├── navigation/     # 라우팅 설정
-├── services/       # API 통신 함수
-├── utils/          # 유틸 함수
-└── App.js
-```
-
----
-
 ## 📌 개발 계획
 
 - 디자인은 [Figma 링크](https://www.figma.com/design/UUrY3mb5Shm4iLQepC5K1o/Untitled?node-id=4-4&t=IySQMjvqnO7xOl1U-0) 기반으로 설계
@@ -72,10 +38,3 @@ kkokkobook-fe/
 - Notion / Discord
 - Figma
 
----
-
-## 🐢 프로젝트 소개
-
-꼬꼬북은 아이들이 주체가 되어 AI와 상호작용하며  
-**창의적인 스토리와 그림이 담긴 나만의 동화책**을 제작할 수 있는 AI 동화 어플입니다.  
-아이들의 상상력과 기술을 연결하는 따뜻한 경험을 제공합니다.
