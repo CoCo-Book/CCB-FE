@@ -1,9 +1,9 @@
 // screens/LoginScreen.js
-ns/LoginScreen.js
 import React, { useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
+import { GOOGLE_CLIENT_ID } from '@env';
 
 // WebBrowser 세션 자동 종료 설정 (필수)
 WebBrowser.maybeCompleteAuthSession();
@@ -11,7 +11,7 @@ WebBrowser.maybeCompleteAuthSession();
 export default function LoginScreen({ navigation }) {
     // Google 로그인 훅 사용
     const [request, response, promptAsync] = Google.useAuthRequest({
-      expoClientId: "100068670518-tod8qm70issgoc5p66cp52at808d1un1.apps.googleusercontent.com",
+      expoClientId: GOOGLE_CLIENT_ID,
     });
   
     useEffect(() => {
