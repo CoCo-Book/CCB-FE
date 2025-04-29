@@ -3,15 +3,17 @@ import React, { useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { GOOGLE_CLIENT_ID } from '@env';
+import { GOOGLE_CLIENT_ID,GOOGLE_IOS_CLIENT_ID } from '@env';
 
 // WebBrowser 세션 자동 종료 설정 (필수)
 WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen({ navigation }) {
     // Google 로그인 훅 사용
+
     const [request, response, promptAsync] = Google.useAuthRequest({
       expoClientId: GOOGLE_CLIENT_ID,
+      iosClientId: GOOGLE_IOS_CLIENT_ID,  // ✅ 추가
     });
   
     useEffect(() => {
