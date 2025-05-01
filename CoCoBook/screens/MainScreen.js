@@ -1,11 +1,11 @@
-// screens/UserInfoScreen.js
+// screens/LoginScreen.js
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function UserInfoScreen() {
+export default function LoginScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>메인 화면</Text>
+      <Text style={styles.text}>Login Screen</Text>
     </View>
   );
 }
@@ -13,6 +13,7 @@ export default function UserInfoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },

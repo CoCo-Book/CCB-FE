@@ -1,0 +1,60 @@
+# Environment
+CoCoBook/.env
+CoCoBook/.env.*
+
+# Dependencies
+CoCoBook/node_modules/
+
+# macOS
+CoCoBook/.DS_Store
+
+# Android
+CoCoBook/android/.gradle/
+CoCoBook/android/app/build/
+CoCoBook/android/build/
+
+# iOS
+CoCoBook/ios/build/
+CoCoBook/ios/Pods/
+
+# IDEs
+CoCoBook/.idea/
+CoCoBook/.vscode/
+
+# Config
+#CoCoBook/metro.config.js
+#CoCoBook/babel.config.js
+#CoCoBook/tsconfig.json
+#CoCoBook/jest.config.js
+
+# Expo
+CoCoBook/.expo/
+CoCoBook/.expo-shared/
+
+# Test outputs
+CoCoBook/__tests__/
+
+# Ruby (Gemfile 관련)
+CoCoBook/Gemfile
+CoCoBook/Gemfile.lock
+
+# Environment variables
+.env
+.env.*
+
+# Jest test coverage
+coverage/
+
+# Expo
+.expo/
+.expo-shared/
+
+# TypeScript
+*.tsbuildinfo
+
+# Test outputs
+__tests__/
+
+# Ruby bundler (in case used)
+Gemfile
+Gemfile.lock

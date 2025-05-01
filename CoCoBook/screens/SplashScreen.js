@@ -4,14 +4,16 @@ import { View, Text, StyleSheet } from 'react-native';
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
-    setTimeout(() => {
-      navigation.replace('Login');
-    }, 1500);  // 1.5초 후 Login 화면으로 이동
-  }, []);
+    const timer = setTimeout(() => {
+      navigation.replace('Login'); // LoginScreen으로 자동 이동
+    }, 2000); // 2초 후 이동
+
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>CoCoBook</Text>
+      <Text style={styles.title}>CoCoBook</Text>
     </View>
   );
 }
@@ -19,12 +21,14 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#B1E3D1',  // 연한 민트색 배경
-    alignItems: 'center',
+    backgroundColor: '#A4CD74', // 이미지와 비슷한 연두색 (Hex 코드 추정)
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  logo: {
-    fontSize: 30,
+  title: {
+    fontSize: 36,
     fontWeight: 'bold',
+    color: 'white',
+    fontFamily: 'System', // 필요 시 커스텀 폰트 적용
   },
 });

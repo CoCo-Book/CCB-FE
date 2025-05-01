@@ -1,36 +1,105 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# macOS
+.DS_Store
+.github/.DS_Store
 
-# dependencies
+# Node
 node_modules/
+npm-debug.log*
+yarn-error.log*
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# Native
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Watchman
+.watchmanconfig
+CoCoBook/.watchmanconfig
 
 # Metro
 .metro-health-check*
+metro-cache/
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+# Temporary files
+tmp/
+temp/
 
-# macOS
-.DS_Store
-*.pem
+# Testing
+coverage/
+__tests__/
 
-# local env files
-.env*.local
+# Android
+android/.gradle/
+android/.idea/
+android/.cxx/
+android/app/build/
+android/build/
+android/local.properties
+android/*.iml
+*.keystore
+CoCoBook/android/app/debug.keystore
+CoCoBook/android/local.properties
 
-# typescript
+# iOS
+ios/Pods/
+ios/build/
+ios/DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.xccheckout
+*.hmap
+*.ipa
+*.moved-aside
+.xcworkspace
+xcuserdata/
+**/.xcode.env.local
+
+# JetBrains / VSCode
+.idea/
+.vscode/
+
+# React Native
+*.jsbundle
+
+# Bundler (Ruby)
+/vendor/bundle/
+CoCoBook/.bundle/
+
+# Yarn (v2+)
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Fastlane
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# Environment Variables
+.env
+.env.*
+CoCoBook/.env
+CoCoBook/.env.*
+
+# Expo
+.expo/
+.expo-shared/
+
+# TypeScript
 *.tsbuildinfo
+
+# ESLint / Prettier
+CoCoBook/.eslintrc.js
+CoCoBook/.prettierrc.js
+
+
+.DS_Store
+.github/.DS_Store
+.idea/
+CoCoBook/.bundle/
+CoCoBook/.watchmanconfig
+CoCoBook/android/app/debug.keystore
+CoCoBook/android/local.properties
+CoCoBook/android/app/.cxx/
