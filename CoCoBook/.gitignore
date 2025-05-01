@@ -116,4 +116,4 @@ android/**/*.txt
 android/**/*.cache
 android/**/compile_commands.json
 android/**/CMakeFiles/
-android/**/build/
+android/**/build/.bundle/
