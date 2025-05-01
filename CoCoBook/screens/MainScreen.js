@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 export default function LoginScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Login Screen</Text>
+      <Text style={styles.text}>Main Screen</Text>
     </View>
   );
 }
