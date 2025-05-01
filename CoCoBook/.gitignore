@@ -103,3 +103,17 @@ CoCoBook/.watchmanconfig
 CoCoBook/android/app/debug.keystore
 CoCoBook/android/local.properties
 CoCoBook/android/app/.cxx/
+
+# Android build artifacts
+android/**/*.cxx/
+android/**/*.cmake/
+android/**/*.ninja
+android/**/*.json
+android/**/*.o
+android/**/*.bin
+android/**/*.log
+android/**/*.txt
+android/**/*.cache
+android/**/compile_commands.json
+android/**/CMakeFiles/
+android/**/build/
