@@ -26,7 +26,7 @@ export default function MainScreen() {
 
       <TouchableOpacity
         style={[styles.button, styles.bookButton]}
-        onPress={() => navigation.navigate('BookShelfScreen')}
+        onPress={() => navigation.navigate('BookShelf')}
       >
         <Text style={[styles.buttonText, styles.boldText]}>책장으로 이동</Text>
       </TouchableOpacity>

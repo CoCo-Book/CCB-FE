@@ -13,6 +13,7 @@ import MakeStoryScreen2 from './screens/MakeStoryScreen2';
 import AnswerScreen from './screens/AnswerScreen';
 import StoryPartialScreen from './screens/StoryPartialScreen';
 import StorySuccessScreen from './screens/StorySuccessScreen';
+import BookShelfScreen from './screens/BookShelfScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <Stack.Screen name="Answer" component={AnswerScreen} />
         <Stack.Screen name="StoryPartial" component={StoryPartialScreen} />
         <Stack.Screen name="StorySuccess" component={StorySuccessScreen} />
+        <Stack.Screen name="BookShelf" component={BookShelfScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
