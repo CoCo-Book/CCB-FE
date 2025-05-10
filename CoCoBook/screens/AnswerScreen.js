@@ -1,29 +1,30 @@
-// screens/MakeStoryScreen.js
+// screens/AnswerScreen.js
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
-const MakeStoryScreen = ({ navigation }) => {
+const AnswerScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.topText}>부기와 대화를 통해 이야기를 생성하세요!</Text>
-      
-      <View style={styles.bubble}>
-        <Text style={styles.bubbleText}>지금부터 너의 이야기를 들려줄래?</Text>
-      </View>
+
+      <ActivityIndicator size="large" color="#3e5d3d" style={{ marginVertical: 10 }} />
 
       <Image source={require('../assets/boogiwithbook.png')} style={styles.image} />
 
+      <Text style={styles.bottomText}>부기가 이야기를 듣는중 ...</Text>
+
+      {/* 임시 버튼 */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Answer')}
+        onPress={() => navigation.navigate('MakeStory2')} // 예시용, 실제 목적지로 변경
       >
-        <Text style={styles.buttonText}>대답하기</Text>
+        <Text style={styles.buttonText}>대답 완료</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default MakeStoryScreen;
+export default AnswerScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -38,25 +39,16 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     marginBottom: 10,
   },
-  bubble: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderColor: '#3e5d3d',
-    borderWidth: 2,
-    marginBottom: 10,
-  },
-  bubbleText: {
-    fontWeight: 'bold',
-    fontSize: 13,
-    color: '#000',
-  },
   image: {
     width: 180,
     height: 180,
     resizeMode: 'contain',
+    marginVertical: 20,
+  },
+  bottomText: {
+    fontSize: 14,
     marginBottom: 20,
+    color: '#3e3e3e',
   },
   button: {
     backgroundColor: '#9ACA70',
