@@ -24,23 +24,18 @@ export default function MainScreen() {
         <Text style={styles.buttonText}>동화 만들러 가기</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, styles.bookButton]}
-        onPress={() => navigation.navigate('BookShelf')}
-      >
-        <Text style={[styles.buttonText, styles.boldText]}>책장으로 이동</Text>
-      </TouchableOpacity>
-
       <View style={styles.navbar}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('BookShelf')}>
           <Image source={require('../assets/icon-home.png')} style={styles.icon} />
           <Text style={styles.navText}>home</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('UserInfo2')}>
           <Image source={require('../assets/icon-heart.png')} style={styles.icon} />
           <Text style={styles.navText}>interest</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
           <Image source={require('../assets/icon-setting.png')} style={styles.icon} />
           <Text style={styles.navText}>settings</Text>
         </TouchableOpacity>
