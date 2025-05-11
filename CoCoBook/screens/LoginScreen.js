@@ -1,9 +1,44 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    if (isSigningIn) return; // 이미 로그인 중이면 무시
+    setIsSigningIn(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+
+      // 예시: userInfo.user.id가 DB에 있으면 Main, 없으면 UserInfo로 이동
+      // 실제로는 서버에 userInfo.user.email 등으로 회원 여부를 확인해야 함
+      const isExistingUser = await checkIfUserExists(userInfo.user.email); // 이 함수는 예시입니다.
+
+      if (isExistingUser) {
+        navigation.navigate('Main');
+      } else {
+        navigation.navigate('UserInfo', { userInfo: userInfo.user });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
+
+  // 예시용 함수 (실제로는 서버와 통신 필요)
+  const checkIfUserExists = async (email) => {
+    // TODO: 서버에 email로 회원 여부 확인 요청
+    // 임시로 localStorage, AsyncStorage, 또는 하드코딩 등으로 테스트 가능
+    // return true; // 기존 유저
+    // return false; // 신규 유저
+    return false; // 테스트용(항상 신규 유저로 이동)
+  };
 
   return (
     <View style={styles.container}>
@@ -63,7 +98,11 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.socialText}>카카오로 계속하기</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.socialButton}>
+      <TouchableOpacity
+        style={styles.socialButton}
+        onPress={handleGoogleLogin}
+        disabled={isSigningIn}
+      >
         <Text style={styles.socialText}>구글로 계속하기</Text>
       </TouchableOpacity>
 

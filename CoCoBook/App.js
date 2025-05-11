@@ -1,5 +1,5 @@
 // App.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './screens/SplashScreen';
@@ -14,9 +14,20 @@ import AnswerScreen from './screens/AnswerScreen';
 import StoryPartialScreen from './screens/StoryPartialScreen';
 import StorySuccessScreen from './screens/StorySuccessScreen';
 import BookShelfScreen from './screens/BookShelfScreen';
+import { GOOGLE_WEB_CLIENT_ID } from '@env';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useEffect(() => {
+    console.log('✅ GOOGLE_WEB_CLIENT_ID:', GOOGLE_WEB_CLIENT_ID); // 👈 추가해보세요!
+    GoogleSignin.configure({
+      webClientId: GOOGLE_WEB_CLIENT_ID,
+      offlineAccess: true,
+    });
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
