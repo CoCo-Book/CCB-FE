@@ -32,12 +32,16 @@ export default function SettingScreen() {
       <Text style={styles.subLabel}>나이</Text>
       <TextInput placeholder="나이를 입력하세요" keyboardType="numeric" style={styles.input} />
 
-      <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Leave')}>
-        <Text style={styles.buttonText}>회원탈퇴</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Subscribe')}>
         <Text style={styles.buttonText}>구독하기</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.buttonText}>로그아웃</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Leave')}>
+        <Text style={styles.buttonText}>회원탈퇴</Text>
       </TouchableOpacity>
 
       {/* 다음 버튼 */}
