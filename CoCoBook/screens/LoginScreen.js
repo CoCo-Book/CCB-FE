@@ -6,6 +6,20 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const isEmailValid = email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  const isPasswordValid = password.length >= 8;
+  const isLoginEnabled = isEmailValid && isPasswordValid;
+
+  // 이메일 변경 시 형식 검사
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    if (!text.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      setEmailError('올바른 이메일 형식을 입력해주세요.');
+    } else {
+      setEmailError('');
+    }
+  };
 
   const handleGoogleLogin = async () => {
     if (isSigningIn) return; // 이미 로그인 중이면 무시
@@ -55,10 +69,15 @@ export default function LoginScreen({ navigation }) {
         placeholder="이메일"
         placeholderTextColor="#777"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={handleEmailChange}
         keyboardType="email-address"
         autoCapitalize="none"
       />
+      {emailError ? (
+        <Text style={{ color: 'red', alignSelf: 'flex-start', marginBottom: 8 }}>
+          {emailError}
+        </Text>
+      ) : null}
 
       {/* 비밀번호 입력 */}
       <TextInput
@@ -69,11 +88,17 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
+      {!isPasswordValid && password.length > 0 && (
+        <Text style={{ color: 'red', alignSelf: 'flex-start', marginBottom: 8 }}>
+          비밀번호는 8자리 이상이어야 합니다.
+        </Text>
+      )}
 
       {/* 로그인 버튼 → MainScreen */}
       <TouchableOpacity
-        style={styles.secondaryButton}
+        style={[styles.secondaryButton, !isLoginEnabled && { opacity: 0.5 }]}
         onPress={() => navigation.navigate('Main')}
+        disabled={!isLoginEnabled}
       >
         <Text style={styles.secondaryButtonText}>로그인하기</Text>
       </TouchableOpacity>
