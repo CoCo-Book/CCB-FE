@@ -1,12 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 
 export default function UserInfoScreen() {
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [gender, setGender] = useState(null); // 'male' | 'female'
   const [age, setAge] = useState('');
+
+  // 한글만 허용하는 함수
+  const handleNameChange = (text) => {
+    const koreanOnly = text.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
+    setName(koreanOnly);
+  };
+
+  const handleNext = () => {
+    if (!name) {
+      Alert.alert('입력 오류', '이름을 입력해주세요.');
+      return;
+    }
+    if (!gender) {
+      Alert.alert('입력 오류', '성별을 선택해주세요.');
+      return;
+    }
+    if (!age) {
+      Alert.alert('입력 오류', '나이를 선택해주세요.');
+      return;
+    }
+    navigation.navigate('UserInfo2');
+  };
 
   return (
     <View style={styles.container}>
@@ -17,7 +40,7 @@ export default function UserInfoScreen() {
         placeholder="이름을 입력하세요"
         placeholderTextColor="#888"
         value={name}
-        onChangeText={setName}
+        onChangeText={handleNameChange}
       />
 
       {/* 성별 선택 */}
@@ -43,21 +66,28 @@ export default function UserInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 나이 입력 */}
+      {/* 나이 선택 */}
       <Text style={styles.label}>나이</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="나이를 입력하세요"
-        placeholderTextColor="#888"
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-      />
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={age}
+          onValueChange={(itemValue) => setAge(itemValue)}
+        >
+          <Picker.Item label="나이를 선택하세요" value="" />
+          {Array.from({ length: 11 }, (_, i) => 3 + i).map((ageValue) => (
+            <Picker.Item
+              key={ageValue}
+              label={`${ageValue}세`}
+              value={ageValue.toString()}
+            />
+          ))}
+        </Picker>
+      </View>
 
       {/* 다음 버튼 */}
       <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => navigation.navigate('UserInfo2')}
+        onPress={handleNext}
       >
         <Text style={styles.nextArrow}>▶</Text>
       </TouchableOpacity>
@@ -107,6 +137,13 @@ const styles = StyleSheet.create({
   genderText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  pickerContainer: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    borderColor: '#2f472f',
+    borderWidth: 2,
+    marginBottom: 12,
   },
   nextButton: {
     position: 'absolute',

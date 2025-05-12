@@ -6,15 +6,15 @@ export default function UserInfo2Screen() {
   const navigation = useNavigation();
 
   const categories = [
-    '공룡', '공주',
+    '왕자', '공주',
     '요정', '자동차',
-    '공룡', '공주',
-    '요정', '자동차',
-    '공룡', '공주',
-    '요정', '자동차',
-    '공룡', '공주',
-    '요정', '자동차',
-    '요정', '자동차',
+    '로봇', '외계인',
+    '동물', '곤충',
+    '공룡', '마법사',
+    '우주', '바다',
+    '인형', '유령',
+    '물고기', '꿈나라',
+    '마법학교', '얼음나라',
   ];
 
   const [selectedItems, setSelectedItems] = useState([]);
@@ -23,6 +23,7 @@ export default function UserInfo2Screen() {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter(i => i !== item));
     } else {
+      if (selectedItems.length >= 5) return;
       setSelectedItems([...selectedItems, item]);
     }
   };
@@ -41,7 +42,7 @@ export default function UserInfo2Screen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>관심사를 선택해주세요</Text>
+      <Text style={styles.title}>관심사를 선택해주세요(1~5개)</Text>
 
       <FlatList
         data={categories}
@@ -54,7 +55,13 @@ export default function UserInfo2Screen() {
 
       <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => navigation.navigate('Main')}
+        onPress={() => {
+          if (selectedItems.length === 0) {
+            alert('최소 1개 이상 선택해주세요!');
+            return;
+          }
+          navigation.navigate('Main');
+        }}
       >
         <Text style={styles.nextArrow}>▶</Text>
       </TouchableOpacity>
