@@ -65,14 +65,14 @@ export default function UserInfo2Screen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#A4CD74',
+    backgroundColor: '#fff',
     padding: 24,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
-    marginTop: 32,         // ← 여기에 이 줄 추가!
+    color: '#2f472f',
+    marginTop: 32,
     marginBottom: 32,
     textAlign: 'center',
   },
@@ -81,15 +81,13 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 24,
   },
   itemButton: {
-    backgroundColor: 'white',
-    borderColor: '#2f472f',
-    borderWidth: 2,
+    backgroundColor: '#e3f3c4',
     borderRadius: 16,
     width: '48%',
-    paddingVertical: 14,
+    paddingVertical: 28,
     alignItems: 'center',
   },
   itemButtonSelected: {
