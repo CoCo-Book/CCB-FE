@@ -1,20 +1,34 @@
+// LoginScreen.js
+
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  TextInput,
+  Alert
+} from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {
+  login as kakaoLogin,
+  getProfile as getKakaoProfile
+} from '@react-native-seoul/kakao-login';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [emailError, setEmailError] = useState('');
-  const isEmailValid = email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isPasswordValid = password.length >= 8;
   const isLoginEnabled = isEmailValid && isPasswordValid;
 
-  // 이메일 변경 시 형식 검사
   const handleEmailChange = (text) => {
     setEmail(text);
-    if (!text.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
       setEmailError('올바른 이메일 형식을 입력해주세요.');
     } else {
       setEmailError('');
@@ -22,48 +36,64 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleGoogleLogin = async () => {
-    if (isSigningIn) return; // 이미 로그인 중이면 무시
+    if (isSigningIn) return;
     setIsSigningIn(true);
+
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo);
+      console.log('✅ Google userInfo:', userInfo);
 
-      // 예시: userInfo.user.id가 DB에 있으면 Main, 없으면 UserInfo로 이동
-      // 실제로는 서버에 userInfo.user.email 등으로 회원 여부를 확인해야 함
-      const isExistingUser = await checkIfUserExists(userInfo.user.email); // 이 함수는 예시입니다.
+      // GoogleSignin.signIn() 결과가 `{ type, data: { user: {…} } }` 형태인 경우를 처리
+      const user =
+        userInfo.user ??               // 이전 버전: 직접 user 프로퍼티
+        userInfo.data?.user ??         // 최근 버전: data.user 안에 존재
+        null;
 
+      if (!user || !user.email) {
+        Alert.alert('로그인 실패', '이메일 정보를 가져올 수 없습니다.');
+        return;
+      }
+
+      const isExistingUser = await checkIfUserExists(user.email);
       if (isExistingUser) {
         navigation.navigate('Main');
       } else {
-        navigation.navigate('UserInfo', { userInfo: userInfo.user });
+        navigation.navigate('UserInfo', { userInfo: user });
       }
     } catch (error) {
-      console.error(error);
+      console.error('Google 로그인 에러 ▶', error);
+      Alert.alert('로그인 중 오류가 발생했습니다.');
     } finally {
       setIsSigningIn(false);
     }
   };
 
-  // 예시용 함수 (실제로는 서버와 통신 필요)
+  const handleKakaoLogin = async () => {
+    try {
+      const token = await kakaoLogin();
+      const profile = await getKakaoProfile();
+      console.log('✅ Kakao token, profile:', token, profile);
+      // TODO: 백엔드에 token/profile 보내서 로그인 처리
+    } catch (e) {
+      console.error('Kakao 로그인 에러 ▶', e);
+      Alert.alert('카카오 로그인 중 오류가 발생했습니다.');
+    }
+  };
+
   const checkIfUserExists = async (email) => {
-    // TODO: 서버에 email로 회원 여부 확인 요청
-    // 임시로 localStorage, AsyncStorage, 또는 하드코딩 등으로 테스트 가능
-    // return true; // 기존 유저
-    // return false; // 신규 유저
-    return false; // 테스트용(항상 신규 유저로 이동)
+    // TODO: 실제 서버 API 호출로 회원 여부 확인
+    return false; // 임시: 항상 신규 유저로 처리
   };
 
   return (
     <View style={styles.container}>
-      {/* CoCo 책 아이콘 */}
       <Image
         source={require('../assets/coco_book.png')}
         style={styles.logo}
         resizeMode="contain"
       />
 
-      {/* 이메일 입력 */}
       <TextInput
         style={styles.input}
         placeholder="이메일"
@@ -73,13 +103,8 @@ export default function LoginScreen({ navigation }) {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      {emailError ? (
-        <Text style={{ color: 'red', alignSelf: 'flex-start', marginBottom: 8 }}>
-          {emailError}
-        </Text>
-      ) : null}
+      {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-      {/* 비밀번호 입력 */}
       <TextInput
         style={styles.input}
         placeholder="비밀번호"
@@ -89,12 +114,9 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry
       />
       {!isPasswordValid && password.length > 0 && (
-        <Text style={{ color: 'red', alignSelf: 'flex-start', marginBottom: 8 }}>
-          비밀번호는 8자리 이상이어야 합니다.
-        </Text>
+        <Text style={styles.errorText}>비밀번호는 8자리 이상이어야 합니다.</Text>
       )}
 
-      {/* 로그인 버튼 → MainScreen */}
       <TouchableOpacity
         style={[styles.secondaryButton, !isLoginEnabled && { opacity: 0.5 }]}
         onPress={() => navigation.navigate('Main')}
@@ -103,7 +125,6 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.secondaryButtonText}>로그인하기</Text>
       </TouchableOpacity>
 
-      {/* 회원가입 버튼 → UserInfoScreen */}
       <TouchableOpacity
         style={styles.primaryButton}
         onPress={() => navigation.navigate('UserInfo')}
@@ -111,15 +132,17 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.primaryButtonText}>회원가입하기</Text>
       </TouchableOpacity>
 
-      {/* 구분선 */}
       <View style={styles.separatorContainer}>
         <View style={styles.separatorLine} />
         <Text style={styles.separatorText}>또는</Text>
         <View style={styles.separatorLine} />
       </View>
 
-      {/* 소셜 로그인 버튼들 */}
-      <TouchableOpacity style={styles.socialButton}>
+      <TouchableOpacity
+        style={styles.socialButton}
+        onPress={handleKakaoLogin}
+        disabled={isSigningIn}
+      >
         <Text style={styles.socialText}>카카오로 계속하기</Text>
       </TouchableOpacity>
 
@@ -131,7 +154,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.socialText}>구글로 계속하기</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.socialButton}>
+      <TouchableOpacity style={styles.socialButton} disabled>
         <Text style={styles.socialText}>네이버로 계속하기</Text>
       </TouchableOpacity>
     </View>
@@ -160,6 +183,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 12,
     backgroundColor: '#fff',
+  },
+  errorText: {
+    color: 'red',
+    alignSelf: 'flex-start',
+    marginBottom: 8,
   },
   primaryButton: {
     backgroundColor: '#fff',
