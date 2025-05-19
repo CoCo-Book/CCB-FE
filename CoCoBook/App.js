@@ -14,6 +14,9 @@ import AnswerScreen from './screens/AnswerScreen';
 import StoryPartialScreen from './screens/StoryPartialScreen';
 import StorySuccessScreen from './screens/StorySuccessScreen';
 import BookShelfScreen from './screens/BookShelfScreen';
+import MembershipScreen from './screens/MembershipScreen';
+import PolicyScreen from './screens/PolicyScreen';
+import TermsScreen from './screens/TermsScreen';
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
@@ -43,6 +46,9 @@ export default function App() {
         <Stack.Screen name="StoryPartial" component={StoryPartialScreen} />
         <Stack.Screen name="StorySuccess" component={StorySuccessScreen} />
         <Stack.Screen name="BookShelf" component={BookShelfScreen} />
+        <Stack.Screen name="Membership" component={MembershipScreen} />
+        <Stack.Screen name="Policy" component={PolicyScreen} />
+        <Stack.Screen name="Terms" component={TermsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
