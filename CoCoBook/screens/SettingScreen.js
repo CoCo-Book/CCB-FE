@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function SettingScreen() {
@@ -43,6 +43,18 @@ export default function SettingScreen() {
         <Text style={styles.icon}>ℹ️</Text>
         <Text style={styles.menuText}>앱 버전</Text>
         <Text style={styles.version}>1.0.6</Text>
+      </View>
+
+      <View style={styles.navbar}>
+        <TouchableOpacity onPress={() => navigation.navigate('UserInfo2')}>
+          <Image source={require('../assets/icon-heart.png')} style={styles.navIconImage} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+          <Image source={require('../assets/icon-home.png')} style={styles.navIconImage} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
+          <Image source={require('../assets/icon-setting.png')} style={styles.navIconImage} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -89,4 +101,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
   },
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#fffce8',
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+  },
+  navIcon: {
+    fontSize: 26,
+  },
+  navIconImage: {
+    width: 36,
+    height: 36,
+    resizeMode: 'contain',
+  }
 });
