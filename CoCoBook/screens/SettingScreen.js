@@ -1,56 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function SettingScreen() {
   const navigation = useNavigation();
-  const [gender, setGender] = useState('');
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>설정</Text>
+      <Text style={styles.header}>내 계정 📕</Text>
 
-      <Text style={styles.subLabel}>이름</Text>
-      <TextInput placeholder="이름을 입력하세요" style={styles.input} />
-
-      <Text style={styles.subLabel}>성별</Text>
-      <View style={styles.genderContainer}>
-        <TouchableOpacity
-          style={[styles.genderButton, gender === '여자' && styles.selected]}
-          onPress={() => setGender('여자')}
-        >
-          <Text style={styles.genderText}>여자</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.genderButton, gender === '남자' && styles.selected]}
-          onPress={() => setGender('남자')}
-        >
-          <Text style={styles.genderText}>남자</Text>
-        </TouchableOpacity>
+      <View style={styles.userSection}>
+        <Text style={styles.username}>👤 김꼬북</Text>
+        <Text style={styles.email}>moonsojung518@gmail.com</Text>
       </View>
 
-      <Text style={styles.subLabel}>나이</Text>
-      <TextInput placeholder="나이를 입력하세요" keyboardType="numeric" style={styles.input} />
-
-      <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Subscribe')}>
-        <Text style={styles.buttonText}>구독하기</Text>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('UserInfo')}>
+        <Text style={styles.icon}>👤</Text>
+        <Text style={styles.menuText}>개인정보 변경</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>로그아웃</Text>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('UserInfo2')}>
+        <Text style={styles.icon}>❤️</Text>
+        <Text style={styles.menuText}>관심사 설정</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('Leave')}>
-        <Text style={styles.buttonText}>회원탈퇴</Text>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('MembershipScreen')}>
+        <Text style={styles.icon}>⭐</Text>
+        <Text style={styles.menuText}>구매 항목 및 멤버십</Text>
       </TouchableOpacity>
 
-      {/* 다음 버튼 */}
-      <TouchableOpacity
-        style={styles.nextButton}
-        onPress={() => navigation.navigate('Main')}
-      >
-        <Text style={styles.nextArrow}>▶</Text>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PolicyScreen')}>
+        <Text style={styles.icon}>🛡️</Text>
+        <Text style={styles.menuText}>개인정보 처리방침</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('TermsScreen')}>
+        <Text style={styles.icon}>📃</Text>
+        <Text style={styles.menuText}>서비스 이용약관</Text>
+      </TouchableOpacity>
+
+      <View style={styles.menuItem}>
+        <Text style={styles.icon}>ℹ️</Text>
+        <Text style={styles.menuText}>앱 버전</Text>
+        <Text style={styles.version}>1.0.6</Text>
+      </View>
     </View>
   );
 }
@@ -58,75 +51,42 @@ export default function SettingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5F3C3',
+    backgroundColor: '#fff',
     padding: 24,
   },
-  label: {
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  subLabel: {
-    marginTop: 16,
-    marginBottom: 4,
-    color: '#555',
-    fontWeight: '600',
-  },
-  input: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#888',
-  },
-  genderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-  },
-  genderButton: {
-    flex: 1,
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#555',
-  },
-  selected: {
-    backgroundColor: '#FEF9E7',
-    borderColor: '#222',
-  },
-  genderText: {
-    fontWeight: 'bold',
-  },
-  actionButton: {
-    backgroundColor: '#fff',
-    padding: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#555',
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontWeight: 'bold',
-  },
-  nextButton: {
-    position: 'absolute',
-    bottom: 36,
-    right: 24,
-    backgroundColor: '#fdf6cc',
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderWidth: 2,
-    borderColor: '#2f472f',
-  },
-  nextArrow: {
+  header: {
     fontSize: 20,
-    color: '#2f472f',
     fontWeight: 'bold',
+    marginBottom: 24,
+  },
+  userSection: {
+    marginBottom: 24,
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  email: {
+    fontSize: 14,
+    color: '#888',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  icon: {
+    fontSize: 18,
+    width: 30,
+  },
+  menuText: {
+    fontSize: 16,
+    flex: 1,
+  },
+  version: {
+    fontSize: 14,
+    color: '#888',
   },
 });

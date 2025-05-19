@@ -15,6 +15,7 @@ import {
   login as kakaoLogin,
   getProfile as getKakaoProfile
 } from '@react-native-seoul/kakao-login';
+import cocoBookLogo from '../assets/coco_book.png';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -87,12 +88,12 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('../assets/coco_book.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+      <View style={styles.container}>
+        <Image
+          source={cocoBookLogo}
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
       <TextInput
         style={styles.input}
