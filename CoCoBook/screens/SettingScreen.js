@@ -24,17 +24,17 @@ export default function SettingScreen() {
         <Text style={styles.menuText}>관심사 설정</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('MembershipScreen')}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Membership')}>
         <Text style={styles.icon}>⭐</Text>
         <Text style={styles.menuText}>구매 항목 및 멤버십</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PolicyScreen')}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Policy')}>
         <Text style={styles.icon}>🛡️</Text>
         <Text style={styles.menuText}>개인정보 처리방침</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('TermsScreen')}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Terms')}>
         <Text style={styles.icon}>📃</Text>
         <Text style={styles.menuText}>서비스 이용약관</Text>
       </TouchableOpacity>

@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 
 export default function UserInfoScreen() {
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const from = route.params?.from || 'Login'; // 기본 경로
+
   const [name, setName] = useState('');
-  const [gender, setGender] = useState(null); // 'male' | 'female'
+  const [gender, setGender] = useState(null);
   const [age, setAge] = useState('');
 
-  // 한글만 허용하는 함수
   const handleNameChange = (text) => {
-    const koreanOnly = text.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
+    const koreanOnly = text.replace(/[^\uAC00-\uD7A3ㄱ-ㅎㅏ-ㅣ]/g, '');
     setName(koreanOnly);
   };
 
@@ -28,12 +38,11 @@ export default function UserInfoScreen() {
       Alert.alert('입력 오류', '나이를 선택해주세요.');
       return;
     }
-    navigation.navigate('UserInfo2');
+    navigation.navigate('UserInfo2', { from });
   };
 
   return (
     <View style={styles.container}>
-      {/* 이름 입력 */}
       <Text style={styles.label}>이름</Text>
       <TextInput
         style={styles.input}
@@ -43,30 +52,22 @@ export default function UserInfoScreen() {
         onChangeText={handleNameChange}
       />
 
-      {/* 성별 선택 */}
       <Text style={styles.label}>성별</Text>
       <View style={styles.genderContainer}>
         <TouchableOpacity
-          style={[
-            styles.genderButton,
-            gender === 'female' && styles.genderSelected,
-          ]}
+          style={[styles.genderButton, gender === 'female' && styles.genderSelected]}
           onPress={() => setGender('female')}
         >
           <Text style={styles.genderText}>여자</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.genderButton,
-            gender === 'male' && styles.genderSelected,
-          ]}
+          style={[styles.genderButton, gender === 'male' && styles.genderSelected]}
           onPress={() => setGender('male')}
         >
           <Text style={styles.genderText}>남자</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 나이 선택 */}
       <Text style={styles.label}>나이</Text>
       <View style={styles.pickerContainer}>
         <Picker
@@ -75,21 +76,13 @@ export default function UserInfoScreen() {
         >
           <Picker.Item label="나이를 선택하세요" value="" />
           {Array.from({ length: 11 }, (_, i) => 3 + i).map((ageValue) => (
-            <Picker.Item
-              key={ageValue}
-              label={`${ageValue}세`}
-              value={ageValue.toString()}
-            />
+            <Picker.Item key={ageValue} label={`${ageValue}세`} value={ageValue.toString()} />
           ))}
         </Picker>
       </View>
 
-      {/* 다음 버튼 */}
-      <TouchableOpacity
-        style={styles.nextButton}
-        onPress={handleNext}
-      >
-        <Text style={styles.nextArrow}>▶</Text>
+      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <Text style={styles.nextArrow}>다음 ▶</Text>
       </TouchableOpacity>
     </View>
   );
@@ -157,7 +150,7 @@ const styles = StyleSheet.create({
     borderColor: '#2f472f',
   },
   nextArrow: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#2f472f',
     fontWeight: 'bold',
   },
