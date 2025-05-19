@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function UserInfo2Screen() {
@@ -42,16 +42,19 @@ export default function UserInfo2Screen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>관심사를 선택해주세요(1~5개)</Text>
+      <ScrollView style={styles.scrollView}>
+        <Text style={styles.title}>관심사를 선택해주세요(1~5개)</Text>
 
-      <FlatList
-        data={categories}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => item + index}
-        numColumns={2}
-        contentContainerStyle={styles.list}
-        columnWrapperStyle={styles.row}
-      />
+        <FlatList
+          data={categories}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => item + index}
+          numColumns={2}
+          contentContainerStyle={styles.list}
+          columnWrapperStyle={styles.row}
+          scrollEnabled={false}
+        />
+      </ScrollView>
 
       <TouchableOpacity
         style={styles.nextButton}
@@ -73,6 +76,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollView: {
+    flex: 1,
     padding: 24,
   },
   title: {
