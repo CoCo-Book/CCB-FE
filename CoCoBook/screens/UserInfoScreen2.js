@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function UserInfo2Screen() {
   const navigation = useNavigation();
+  const route = useRoute();
+  const from = route.params?.from || 'Main'; // 기본값 Main
 
   const categories = [
     '왕자', '공주',
@@ -23,8 +25,30 @@ export default function UserInfo2Screen() {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter(i => i !== item));
     } else {
-      if (selectedItems.length >= 5) return;
+      if (selectedItems.length >= 5) {
+        Alert.alert('최대 5개까지 선택할 수 있어요!');
+        return;
+      }
       setSelectedItems([...selectedItems, item]);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedItems.length < 1) {
+      Alert.alert('관심사를 하나 이상 선택해주세요.');
+      return;
+    }
+    
+    // from 파라미터에 따라 다른 화면으로 이동
+    switch (from) {
+      case 'Setting':
+        navigation.navigate('Setting');
+        break;
+      case 'UserInfo':
+        navigation.navigate('Main');
+        break;
+      default:
+        navigation.navigate('Main');
     }
   };
 
@@ -42,30 +66,18 @@ export default function UserInfo2Screen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>관심사를 선택해주세요(1~5개)</Text>
+      <Text style={styles.title}>관심사를 선택해주세요 (1~5개)</Text>
 
-        <FlatList
-          data={categories}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => item + index}
-          numColumns={2}
-          contentContainerStyle={styles.list}
-          columnWrapperStyle={styles.row}
-          scrollEnabled={false}
-        />
-      </ScrollView>
+      <FlatList
+        data={categories}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => item + index}
+        numColumns={2}
+        contentContainerStyle={styles.list}
+        columnWrapperStyle={styles.row}
+      />
 
-      <TouchableOpacity
-        style={styles.nextButton}
-        onPress={() => {
-          if (selectedItems.length === 0) {
-            alert('최소 1개 이상 선택해주세요!');
-            return;
-          }
-          navigation.navigate('Main');
-        }}
-      >
+      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
         <Text style={styles.nextArrow}>▶</Text>
       </TouchableOpacity>
     </View>
@@ -77,19 +89,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  scrollView: {
-    flex: 1,
-    padding: 24,
-  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2f472f',
     marginTop: 32,
-    marginBottom: 32,
+    marginBottom: 24,
     textAlign: 'center',
   },
   list: {
+    paddingHorizontal: 24,
     paddingBottom: 100,
   },
   row: {

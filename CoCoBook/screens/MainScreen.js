@@ -41,7 +41,10 @@ export default function MainScreen() {
           <Image source={require('../assets/icon-home.png')} style={styles.icon} />
           <Text style={styles.navText}>home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('UserInfo2')}>
+        <TouchableOpacity 
+          style={styles.navItem} 
+          onPress={() => navigation.navigate('UserInfo2', { from: 'Main' })}
+        >
           <Image source={require('../assets/icon-heart.png')} style={styles.icon} />
           <Text style={styles.navText}>interest</Text>
         </TouchableOpacity>

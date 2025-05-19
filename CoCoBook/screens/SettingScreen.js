@@ -19,7 +19,7 @@ export default function SettingScreen() {
         <Text style={styles.menuText}>개인정보 변경</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('UserInfo2')}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('UserInfo2', { from: 'Setting' })}>
         <Text style={styles.icon}>❤️</Text>
         <Text style={styles.menuText}>관심사 설정</Text>
       </TouchableOpacity>
@@ -46,7 +46,7 @@ export default function SettingScreen() {
       </View>
 
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate('UserInfo2')}>
+        <TouchableOpacity onPress={() => navigation.navigate('UserInfo2', { from: 'Setting' })}>
           <Image source={require('../assets/icon-heart.png')} style={styles.navIconImage} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Main')}>
