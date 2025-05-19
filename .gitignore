@@ -58,3 +58,4 @@ __tests__/
 # Ruby bundler (in case used)
 Gemfile
 Gemfile.lock
+CoCoBook/android/app/src/main/res/values/strings.xml
