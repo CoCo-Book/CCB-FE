@@ -1,85 +1,138 @@
 // screens/StorySuccessScreen.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const StorySuccessScreen = ({ navigation }) => {
+export default function StorySuccessScreen(props) {
+  const navigation = useNavigation();
+  // 실제로는 props.imageUri 또는 redux, context 등에서 받아올 수 있음
+  // 예시: const imageUri = props.imageUri;
+  // 지금은 임시로 null (나중에 백엔드 연동 시 이 부분만 교체)
+  const imageUri = null; // 예: 'https://example.com/generated-image.png'
+
   return (
     <View style={styles.container}>
-      {/* 배경 색 */}
-      <View style={styles.header} />
-
-      {/* 책 UI (배경 이미지로 구성 가능) */}
-      <View style={styles.bookWrapper}>
-        <View style={styles.bookTitle}>
-          <Text style={styles.bookTitleText}>내가 만든 이야기</Text>
+      {/* 상단 회색 영역 + 홈으로 돌아가기 버튼 */}
+      <View style={styles.topBar}>
+        <TouchableOpacity style={styles.homeBtn} onPress={() => navigation.navigate('Main')}>
+          <Text style={styles.homeBtnText}>홈으로 돌아가기</Text>
+        </TouchableOpacity>
+      </View>
+      {/* 메인 이미지 + 텍스트 */}
+      <View style={styles.contentSection}>
+        <View style={styles.imageWrap}>
+          {imageUri ? (
+            <Image source={{ uri: imageUri }} style={styles.storyImage} />
+          ) : (
+            <View style={[styles.storyImage, styles.placeholderImg]} />
+          )}
         </View>
-
-        <View style={styles.bookContent}>
-          {/* 여기에 나중에 작성된 동화 내용 또는 썸네일 추가 */}
+        <View style={styles.textSection}>
+          <Text style={styles.storyText}>루미는 아라의 첫 친구가 되었다.</Text>
+          <Text style={styles.storyText}>둘은 금방 친해져 함께 다닌다.</Text>
+          <Text style={styles.storyText}>루미는 아라에게 학교를 소개한다.</Text>
+          <Text style={styles.storyText}>마법 도서관과 실험실이 있다.</Text>
+          <Text style={styles.storyText}>둘은 신난 마음으로 학교를 돌아다닌다.</Text>
         </View>
       </View>
-
-      <TouchableOpacity
-        style={styles.homeButton}
-        onPress={() => navigation.navigate('Main')}
-      >
-        <Text style={styles.homeButtonText}>홈으로 돌아가기</Text>
-      </TouchableOpacity>
+      {/* 하단 회색 영역 + 좌우 화살표 */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity style={styles.arrowBtn}>
+          <Text style={styles.arrowIcon}>{'◀'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.arrowBtn}>
+          <Text style={styles.arrowIcon}>{'▶'}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-};
-
-export default StorySuccessScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e8f6cc',
+    backgroundColor: '#F7F8F6',
+    justifyContent: 'space-between',
+  },
+  topBar: {
+    backgroundColor: '#fff',
+    paddingTop: 18,
+    paddingBottom: 12,
+    alignItems: 'center',
+  },
+  homeBtn: {
+    backgroundColor: '#FEF8E4',
+    borderColor: '#46613B',
+    borderWidth: 2,
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+  },
+  homeBtnText: {
+    color: '#46613B',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  contentSection: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 40,
+    backgroundColor: '#F7F8F6',
+    paddingTop: 12,
   },
-  header: {
-    height: 20,
-  },
-  bookWrapper: {
-    backgroundColor: '#5b4534',
-    width: '90%',
-    height: '70%',
-    borderRadius: 8,
+  imageWrap: {
+    width: '100%',
     alignItems: 'center',
-    paddingTop: 10,
+    marginBottom: 12,
   },
-  bookTitle: {
-    backgroundColor: '#c8c0b7',
-    paddingVertical: 6,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginTop: 10,
+  storyImage: {
+    width: 320,
+    height: 220,
+    borderRadius: 12,
+    backgroundColor: '#eee',
+    resizeMode: 'cover',
   },
-  bookTitleText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#4a2e17',
+  placeholderImg: {
+    backgroundColor: '#eee',
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
-  bookContent: {
-    backgroundColor: '#fff7cc',
-    width: '90%',
-    height: '80%',
-    borderRadius: 6,
-    marginTop: 20,
+  textSection: {
+    marginTop: 8,
+    alignItems: 'center',
   },
-  homeButton: {
-    marginTop: 30,
-    backgroundColor: '#fdf6dc',
+  storyText: {
+    fontSize: 18,
+    color: '#222',
+    marginBottom: 4,
+    textAlign: 'center',
+    fontWeight: '400',
+  },
+  bottomBar: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 32,
     paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderWidth: 2,
-    borderColor: '#4a2e17',
-    borderRadius: 8,
   },
-  homeButtonText: {
-    color: '#4a2e17',
+  arrowBtn: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#FEF8E4',
+    borderColor: '#24704F',
+    borderWidth: 4,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 8,
+    flexDirection: 'row',
+  },
+  arrowIcon: {
+    fontSize: 32,
+    color: '#24704F',
     fontWeight: 'bold',
+    lineHeight: 38,
   },
 });

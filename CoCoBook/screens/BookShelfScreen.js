@@ -1,73 +1,176 @@
 // screens/BookSelfScreen.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function BookSelfScreen() {
+const BOOKS = [
+  // 예시: 책이 없으면 빈 배열, 있으면 아래처럼 채움
+  // { id: '1', title: '신데렐라', cover: require('../assets/cinderella.png') },
+  // { id: '2', title: '신데렐라', cover: require('../assets/cinderella.png') },
+  // ...
+];
+
+export default function BookShelfScreen() {
   const navigation = useNavigation();
+  const books = BOOKS; // 실제로는 props, state, redux 등에서 받아올 수 있음
+
+  const renderEmpty = () => (
+    <View style={styles.emptyContainer}>
+      <Image source={require('../assets/book.png')} style={styles.emptyBookIcon} />
+      <Text style={styles.emptyText}>아직 동화책이 없어요</Text>
+      <TouchableOpacity style={styles.createButton} onPress={() => navigation.navigate('MakeStory')}>
+        <Text style={styles.createButtonText}>동화 만들러 가기</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderBook = ({ item }) => (
+    <View style={styles.bookItem}>
+      <Image source={item.cover} style={styles.bookCover} />
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>내가 만든 책장</Text>
-      <ScrollView contentContainerStyle={styles.bookGrid}>
-        {Array.from({ length: 6 }).map((_, index) => (
-          <View key={index} style={styles.bookPlaceholder} />
-        ))}
-      </ScrollView>
-      <TouchableOpacity
-        style={styles.homeButton}
-        onPress={() => navigation.navigate('Main')}
-      >
-        <Text style={styles.homeButtonText}>홈으로 돌아가기</Text>
-      </TouchableOpacity>
+    <View style={{ flex: 1, backgroundColor: '#F7F8F6' }}>
+      <View style={styles.headerSection}>
+        <Text style={styles.headerTitle}>나의 책장</Text>
+      </View>
+      <View style={styles.shelfSection}>
+        {books.length === 0 ? (
+          renderEmpty()
+        ) : (
+          <FlatList
+            data={books}
+            renderItem={renderBook}
+            keyExtractor={item => item.id}
+            numColumns={2}
+            contentContainerStyle={styles.booksGrid}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </View>
+      {/* 언더바 네비게이션 */}
+      <View style={styles.navbar}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('BookShelf')}>
+          <Image source={require('../assets/icon-heart.png')} style={styles.iconXLarge} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Main')}>
+          <Image source={require('../assets/icon-home.png')} style={styles.iconXLarge} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Setting')}>
+          <Image source={require('../assets/icon-setting.png')} style={styles.iconXLarge} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
+const { width } = Dimensions.get('window');
+const BOOK_SIZE = (width - 64) / 2;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#DDECB3',
-    alignItems: 'center',
-    paddingTop: 50,
+  headerSection: {
+    backgroundColor: '#E6F3D2',
+    paddingTop: 16,
+    paddingBottom: 8,
+    paddingHorizontal: 0,
+    borderBottomWidth: 0,
   },
-  title: {
-    fontSize: 20,
+  headerTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
-    alignSelf: 'flex-start',
-    marginLeft: 30,
-    color: '#3E2F20',
+    color: '#4B6B2F',
+    fontFamily: 'sans-serif-medium',
+    marginLeft: 16,
   },
-  bookGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  shelfSection: {
+    flex: 1,
+    backgroundColor: '#E6F3D2',
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
-  bookPlaceholder: {
-    width: 100,
-    height: 140,
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: '30%',
+  },
+  emptyBookIcon: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginTop: 0,
+    marginBottom: 24,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#4B6B2F',
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  createButton: {
     backgroundColor: '#fff',
-    borderColor: '#aaa',
-    borderWidth: 1,
-    borderRadius: 8,
-    margin: 10,
-  },
-  homeButton: {
-    backgroundColor: '#FFF4D6',
-    borderColor: '#3E2F20',
-    borderWidth: 2,
+    borderColor: '#4B6B2F',
+    borderWidth: 3,
     borderRadius: 8,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    position: 'absolute',
-    bottom: 30,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    marginTop: 10,
   },
-  homeButtonText: {
-    fontSize: 16,
+  createButtonText: {
+    color: '#4B6B2F',
     fontWeight: 'bold',
-    color: '#3E2F20',
+    fontSize: 18,
+  },
+  booksGrid: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
+    alignItems: 'center',
+  },
+  bookItem: {
+    width: BOOK_SIZE,
+    height: BOOK_SIZE * 1.3,
+    margin: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  bookCover: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#A4CD74',
+  },
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderTopColor: '#E4F4C9',
+    backgroundColor: '#fff',
+    height: 70,
+    alignItems: 'center',
+    paddingBottom: 0,
+    paddingTop: 0,
+  },
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  iconXLarge: {
+    width: 58,
+    height: 58,
+    resizeMode: 'contain',
   },
 });

@@ -165,7 +165,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#A4CD74',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
@@ -191,30 +191,26 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   primaryButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#E1EEBC',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 24,
     marginBottom: 16,
     width: '100%',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#444',
   },
   primaryButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: '#FEEFC3',
+    backgroundColor: '#E1EEBC',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 24,
     marginBottom: 12,
     width: '100%',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#444',
   },
   secondaryButtonText: {
     fontSize: 18,
@@ -236,14 +232,12 @@ const styles = StyleSheet.create({
     color: '#444',
   },
   socialButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#E1EEBC',
     borderRadius: 12,
     paddingVertical: 10,
     alignItems: 'center',
     marginVertical: 6,
     width: '100%',
-    borderWidth: 2,
-    borderColor: '#444',
   },
   socialText: {
     fontSize: 16,

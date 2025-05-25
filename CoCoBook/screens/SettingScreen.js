@@ -1,59 +1,78 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function SettingScreen() {
   const navigation = useNavigation();
+  // 예시 프로필 정보
+  const profile = {
+    name: '김꼬북',
+    email: 'moonsojung518@gmail.com',
+    avatar: require('../assets/profile.png'), // 없으면 기본 아이콘
+  };
+
+  // 메뉴 항목 데이터
+  const menuItems = [
+    { icon: '👤', label: '개인정보 변경', onPress: () => navigation.navigate('UserInfo') },
+    { icon: '❤️', label: '관심사 설정', onPress: () => navigation.navigate('UserInfo2') },
+    { icon: '⭐', label: '구매 항목 및 멤버십', onPress: () => {} },
+    { icon: '🛡️', label: '개인정보 처리방침', onPress: () => {} },
+    { icon: '📃', label: '서비스 이용약관', onPress: () => {} },
+  ];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>내 계정 📕</Text>
+    <View style={{ flex: 1, backgroundColor: '#F7F8F6' }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 90 }} showsVerticalScrollIndicator={false}>
+        {/* 상단 로고/타이틀 */}
+        <View style={styles.headerSection}>
+          <View style={styles.logoRow}>
+            <Image source={require('../assets/book.png')} style={styles.logoImg} />
+            <Text style={styles.headerTitle}>내 계정</Text>
+          </View>
+        </View>
 
-      <View style={styles.userSection}>
-        <Text style={styles.username}>👤 김꼬북</Text>
-        <Text style={styles.email}>moonsojung518@gmail.com</Text>
-      </View>
+        {/* 프로필 영역 (왼쪽 사진만) */}
+        <View style={styles.profileSection}>
+          <Image source={profile.avatar} style={styles.profileAvatar} />
+          <View style={{ marginLeft: 16 }}>
+            <Text style={styles.profileName}>{profile.name}</Text>
+            <Text style={styles.profileEmail}>{profile.email}</Text>
+          </View>
+        </View>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('UserInfo')}>
-        <Text style={styles.icon}>👤</Text>
-        <Text style={styles.menuText}>개인정보 변경</Text>
-      </TouchableOpacity>
+        {/* 메뉴 리스트 */}
+        <View style={styles.menuSection}>
+          {menuItems.map((item, idx) => (
+            <TouchableOpacity key={item.label} style={styles.menuItem} onPress={item.onPress} activeOpacity={0.7}>
+              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <Text style={styles.menuText}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('UserInfo2', { from: 'Setting' })}>
-        <Text style={styles.icon}>❤️</Text>
-        <Text style={styles.menuText}>관심사 설정</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Membership')}>
-        <Text style={styles.icon}>⭐</Text>
-        <Text style={styles.menuText}>구매 항목 및 멤버십</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Policy')}>
-        <Text style={styles.icon}>🛡️</Text>
-        <Text style={styles.menuText}>개인정보 처리방침</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Terms')}>
-        <Text style={styles.icon}>📃</Text>
-        <Text style={styles.menuText}>서비스 이용약관</Text>
-      </TouchableOpacity>
-
-      <View style={styles.menuItem}>
-        <Text style={styles.icon}>ℹ️</Text>
-        <Text style={styles.menuText}>앱 버전</Text>
-        <Text style={styles.version}>1.0.6</Text>
-      </View>
-
+        {/* 앱 버전/로그아웃/회원탈퇴 (오른쪽 사진 참고) */}
+        <View style={styles.bottomSection}>
+          <View style={styles.versionRow}>
+            <Text style={styles.menuIcon}>{'ℹ️'}</Text>
+            <View>
+              <Text style={styles.menuText}>앱 버전</Text>
+              <Text style={styles.versionText}>1.0.6</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.logoutBtn}><Text style={styles.logoutText}>로그아웃</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.withdrawBtn}><Text style={styles.withdrawText}>회원탈퇴</Text></TouchableOpacity>
+        </View>
+      </ScrollView>
+      {/* 언더바 네비게이션 */}
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate('UserInfo2', { from: 'Setting' })}>
-          <Image source={require('../assets/icon-heart.png')} style={styles.navIconImage} />
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('BookShelf')}>
+          <Image source={require('../assets/icon-heart.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-          <Image source={require('../assets/icon-home.png')} style={styles.navIconImage} />
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Main')}>
+          <Image source={require('../assets/icon-home.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
-          <Image source={require('../assets/icon-setting.png')} style={styles.navIconImage} />
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Setting')}>
+          <Image source={require('../assets/icon-setting.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
       </View>
     </View>
@@ -61,65 +80,136 @@ export default function SettingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  headerSection: {
     backgroundColor: '#fff',
-    padding: 24,
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 0,
   },
-  header: {
-    fontSize: 20,
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  logoImg: {
+    width: 36,
+    height: 36,
+    marginRight: 8,
+    resizeMode: 'contain',
+  },
+  headerTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 24,
+    color: '#222',
+    fontFamily: 'sans-serif-medium',
   },
-  userSection: {
-    marginBottom: 24,
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginHorizontal: 0,
+    paddingVertical: 24,
+    paddingLeft: 32,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  username: {
-    fontSize: 16,
+  profileAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#F7F8F6',
+    resizeMode: 'contain',
+  },
+  profileName: {
+    fontSize: 18,
     fontWeight: 'bold',
+    color: '#222',
+    marginBottom: 2,
   },
-  email: {
+  profileEmail: {
     fontSize: 14,
     color: '#888',
+  },
+  menuSection: {
+    backgroundColor: '#fff',
+    marginTop: 0,
+    marginBottom: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: 20,
+    paddingLeft: 32,
     borderBottomWidth: 1,
-    borderColor: '#eee',
+    borderBottomColor: '#eee',
   },
-  icon: {
-    fontSize: 18,
-    width: 30,
+  menuIcon: {
+    fontSize: 28,
+    color: '#222',
+    fontWeight: 'bold',
+    marginRight: 28,
   },
   menuText: {
-    fontSize: 16,
-    flex: 1,
+    fontSize: 18,
+    color: '#222',
+    fontWeight: 'bold',
   },
-  version: {
+  bottomSection: {
+    backgroundColor: '#fff',
+    paddingVertical: 18,
+    paddingLeft: 32,
+    borderTopWidth: 0,
+  },
+  versionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  versionText: {
     fontSize: 14,
     color: '#888',
+    marginLeft: 2,
+  },
+  logoutBtn: {
+    marginTop: 8,
+  },
+  logoutText: {
+    color: '#888',
+    fontSize: 15,
+    textDecorationLine: 'underline',
+  },
+  withdrawBtn: {
+    marginTop: 2,
+  },
+  withdrawText: {
+    color: '#888',
+    fontSize: 15,
+    textDecorationLine: 'underline',
   },
   navbar: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
     flexDirection: 'row',
+    width: '100%',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#fffce8',
     borderTopWidth: 1,
-    borderColor: '#ccc',
+    borderTopColor: '#E4F4C9',
+    backgroundColor: '#fff',
+    height: 70,
+    alignItems: 'center',
+    paddingBottom: 0,
+    paddingTop: 0,
   },
-  navIcon: {
-    fontSize: 26,
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
-  navIconImage: {
-    width: 36,
-    height: 36,
+  iconXLarge: {
+    width: 58,
+    height: 58,
     resizeMode: 'contain',
-  }
+  },
 });
