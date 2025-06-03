@@ -25,15 +25,15 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   useEffect(() => {
     console.log('✅ GOOGLE_WEB_CLIENT_ID:', GOOGLE_WEB_CLIENT_ID); // 👈 추가해보세요!
-    GoogleSignin.configure({
-      webClientId: GOOGLE_WEB_CLIENT_ID,
-      offlineAccess: true,
-    });
+    // GoogleSignin.configure({
+    //   webClientId: '', // 임시로 빈 값
+    //   offlineAccess: true,
+    // });
   }, []);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="UserInfo">
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="UserInfo" component={UserInfoScreen} />
