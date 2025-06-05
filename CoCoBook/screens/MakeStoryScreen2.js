@@ -1,6 +1,7 @@
 // screens/MakeStoryScreen2.js
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { startRecording } from '../hooks/useRecorder';
 
 const MakeStoryScreen2 = ({ navigation }) => {
   return (
@@ -17,7 +18,14 @@ const MakeStoryScreen2 = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Answer')} // 이어가기
+          onPress={async () => {
+            await startRecording();
+            navigation.navigate('Answer', {
+              childName: '상아',   // 실제 사용자 입력 값
+              age: 7,             // 실제 사용자 입력 값
+              interests: ['공룡', '로봇'],  // 배열 형태로 넘김
+            });
+          }}
         >
           <Text style={styles.buttonText}>이어가기</Text>
         </TouchableOpacity>

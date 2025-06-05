@@ -1,8 +1,18 @@
 // screens/MakeStoryScreen.js
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { startRecording } from '../hooks/useRecorder';
 
 const MakeStoryScreen = ({ navigation }) => {
+  const handleAnswer = async () => {
+    await startRecording();
+    navigation.navigate('Answer', {
+      childName: '상아',   // 실제 사용자 입력 값
+      age: 7,             // 실제 사용자 입력 값
+      interests: ['공룡', '로봇'],  // 배열 형태로 넘김
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.topText}>부기와 대화를 통해 이야기를 생성하세요!</Text>
@@ -15,7 +25,7 @@ const MakeStoryScreen = ({ navigation }) => {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Answer')}
+        onPress={handleAnswer}
       >
         <Text style={styles.buttonText}>대답하기</Text>
       </TouchableOpacity>
