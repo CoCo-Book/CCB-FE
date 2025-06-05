@@ -10,6 +10,7 @@ import { WS_AUTH_TOKEN } from '@env';
 const AnswerScreen = ({ navigation, route }) => {
   const ws = useRef(null);
   const [status, setStatus] = useState('connecting');
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     const { childName, age, interests } = route.params;
@@ -51,27 +52,44 @@ const AnswerScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const start = async () => {
-      const { path } = await startRecording();
-      console.log('🔴 녹음 시작:', path);
+      const result = await startRecording();
+      if (result) {
+        setIsRecording(true);
+      }
     };
     start();
   }, []);
 
+  const handleStart = async () => {
+    const result = await startRecording();
+    if (result) {
+      setIsRecording(true);
+    }
+  };
+
   const handleFinish = async () => {
-    const { path, fileName } = await stopRecording();
-    console.log('녹음 종료, 저장 위치:', path);
+    if (!isRecording) {
+      Alert.alert('실패', '녹음이 시작되지 않았습니다.');
+      return;
+    }
+    const path = await stopRecording();
+    setIsRecording(false);
+
+    if (!path || path === 'Already stopped') {
+      Alert.alert('실패', '녹음 파일 경로를 가져오지 못했습니다.');
+      return;
+    }
 
     try {
       const base64String = await RNFS.readFile(path, 'base64');
-      const payload = JSON.stringify({
-        event: 'audio',
-        data: base64String,
-        filename: fileName,
+      Alert.alert('성공', `파일이 정상적으로 저장되었습니다:\n${path}`);
+      navigation.navigate('MakeStory2', {
+        audioPath: path,
+        base64: base64String,
       });
-      ws.current.send(payload);
-      console.log('WebSocket으로 오디오 데이터 전송 완료');
     } catch (err) {
       console.error('🔴 파일을 Base64로 읽기 실패:', err);
+      Alert.alert('실패', '파일을 읽는 데 실패했습니다.');
     }
   };
 

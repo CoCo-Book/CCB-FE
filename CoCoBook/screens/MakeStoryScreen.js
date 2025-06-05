@@ -1,16 +1,26 @@
 // screens/MakeStoryScreen.js
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { startRecording } from '../hooks/useRecorder';
 
 const MakeStoryScreen = ({ navigation }) => {
   const handleAnswer = async () => {
-    await startRecording();
-    navigation.navigate('Answer', {
-      childName: '상아',   // 실제 사용자 입력 값
-      age: 7,             // 실제 사용자 입력 값
-      interests: ['공룡', '로봇'],  // 배열 형태로 넘김
-    });
+    try {
+      const result = await startRecording();
+      console.log('startRecording 결과:', result);
+      if (result) {
+        navigation.navigate('Answer', {
+          childName: '상아',   // 실제 사용자 입력 값
+          age: 7,             // 실제 사용자 입력 값
+          interests: ['공룡', '로봇'],  // 배열 형태로 넘김
+        });
+      } else {
+        Alert.alert('실패', '녹음이 시작되지 않았습니다.');
+      }
+    } catch (e) {
+      console.error('startRecording 에러:', e);
+      Alert.alert('실패', '녹음 시작 중 오류가 발생했습니다.');
+    }
   };
 
   return (

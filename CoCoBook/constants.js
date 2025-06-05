@@ -1,12 +1,12 @@
 export const API = {
-  BASE_URL: 'http://54.180.160.207',
+  BASE_URL: 'http://43.201.110.111',
   ENDPOINTS: {
     AUDIO_META: '/audio-meta'
   }
 };
 
 export const WS = {
-  BASE_URL: 'ws://54.180.160.207:8000/ws/audio'
+  BASE_URL: 'ws://43.201.110.111:8000/ws/audio'
 };
 
 export const S3 = {
