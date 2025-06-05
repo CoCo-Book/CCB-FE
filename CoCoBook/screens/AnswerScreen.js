@@ -4,7 +4,8 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Ale
 import RNFS from 'react-native-fs';
 import { startRecording, stopRecording } from '../hooks/useRecorder';
 import { getPresignedUrl, uploadToS3 } from '../api/s3';
-import { API, S3 } from '../constants';
+import { API, WS } from '../constants';
+import { WS_AUTH_TOKEN } from '@env';
 
 const AnswerScreen = ({ navigation, route }) => {
   const ws = useRef(null);
@@ -12,8 +13,8 @@ const AnswerScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const { childName, age, interests } = route.params;
-    const queryParams = `child_name=${encodeURIComponent(childName)}&age=${age}&interests=${encodeURIComponent(interests.join(','))}`;
-    const wsUrl = `ws://52.79.157.124:8000/ws/audio?${queryParams}`;
+    const queryParams = `child_name=${encodeURIComponent(childName)}&age=${age}&interests=${encodeURIComponent(interests.join(','))}&token=${WS_AUTH_TOKEN}`;
+    const wsUrl = `${WS.BASE_URL}?${queryParams}`;
 
     ws.current = new WebSocket(wsUrl);
 
