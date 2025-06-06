@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
+import ArrowImg from '../assets/arrow.png';
 
 export default function UserInfoScreen() {
   const navigation = useNavigation();
@@ -43,17 +45,15 @@ export default function UserInfoScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>이름</Text>
+      <Text style={styles.title}>회원정보를 입력해주세요</Text>
       <TextInput
         style={styles.input}
         placeholder="이름을 입력하세요"
-        placeholderTextColor="#888"
+        placeholderTextColor="#A0A0A0"
         value={name}
         onChangeText={handleNameChange}
       />
-
-      <Text style={styles.label}>성별</Text>
-      <View style={styles.genderContainer}>
+      <View style={styles.genderRow}>
         <TouchableOpacity
           style={[styles.genderButton, gender === 'female' && styles.genderSelected]}
           onPress={() => setGender('female')}
@@ -67,91 +67,92 @@ export default function UserInfoScreen() {
           <Text style={styles.genderText}>남자</Text>
         </TouchableOpacity>
       </View>
-
-      <Text style={styles.label}>나이</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={age}
-          onValueChange={(itemValue) => setAge(itemValue)}
-        >
-          <Picker.Item label="나이를 선택하세요" value="" />
-          {Array.from({ length: 11 }, (_, i) => 3 + i).map((ageValue) => (
-            <Picker.Item key={ageValue} label={`${ageValue}세`} value={ageValue.toString()} />
-          ))}
-        </Picker>
-      </View>
-
+      <TextInput
+        style={styles.input}
+        placeholder="나이를 입력하세요"
+        placeholderTextColor="#A0A0A0"
+        value={age}
+        onChangeText={setAge}
+        keyboardType="numeric"
+      />
       <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextArrow}>다음 ▶</Text>
+        <Image source={ArrowImg} style={{ width: 64, height: 64, resizeMode: 'contain' }} />
       </TouchableOpacity>
     </View>
   );
 }
 
+const BASE_BORDER_WIDTH = 4;
+const BASE_SPACING = 56; // 기존 margin/padding의 2배로 넉넉하게
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#A4CD74',
-    padding: 24,
+    backgroundColor: '#FAFAFA',
+    paddingHorizontal: 40,
+    paddingTop: 40,
   },
-  label: {
-    fontSize: 16,
-    color: 'white',
+  title: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 24,
-    marginBottom: 8,
+    color: '#3C5A2A',
+    marginBottom: BASE_SPACING,
+    textAlign: 'left',
+    fontFamily: 'NanumGothic',
   },
   input: {
-    backgroundColor: 'white',
+    borderWidth: BASE_BORDER_WIDTH,
+    borderColor: '#E1EEBC',
     borderRadius: 16,
-    borderColor: '#2f472f',
-    borderWidth: 2,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
+    paddingHorizontal: BASE_SPACING / 2,
+    paddingVertical: BASE_SPACING / 2.5,
+    fontSize: 18,
+    backgroundColor: '#fff',
+    marginBottom: BASE_SPACING,
+    color: '#3C5A2A',
+    fontFamily: 'NanumGothic',
   },
-  genderContainer: {
+  genderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: BASE_SPACING,
   },
   genderButton: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F3FAD5',
     borderRadius: 16,
-    borderColor: '#2f472f',
-    borderWidth: 2,
-    paddingVertical: 12,
-    marginRight: 10,
+    borderWidth: BASE_BORDER_WIDTH,
+    borderColor: '#E1EEBC',
+    paddingVertical: BASE_SPACING / 2.5,
+    marginHorizontal: BASE_SPACING / 7,
     alignItems: 'center',
   },
   genderSelected: {
-    backgroundColor: '#fdf6cc',
+    borderColor: '#4B662B',
   },
   genderText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
-  },
-  pickerContainer: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    borderColor: '#2f472f',
-    borderWidth: 2,
-    marginBottom: 12,
+    color: '#3C5A2A',
+    fontFamily: 'NanumGothic',
   },
   nextButton: {
     position: 'absolute',
     bottom: 36,
     right: 24,
-    backgroundColor: '#fdf6cc',
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderWidth: 2,
-    borderColor: '#2f472f',
+    width: 64,
+    height: 64,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  nextArrow: {
-    fontSize: 18,
-    color: '#2f472f',
-    fontWeight: 'bold',
+  triangle: {
+    width: 0,
+    height: 0,
+    borderTopWidth: 16,
+    borderBottomWidth: 16,
+    borderLeftWidth: 32,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: '#3C5A2A',
+    marginLeft: 6,
   },
 });

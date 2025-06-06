@@ -1,4 +1,5 @@
 // screens/AnswerScreen.js
+// screens/AnswerScreen.js
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import RNFS from 'react-native-fs';
@@ -174,59 +175,118 @@ const AnswerScreen = ({ navigation, route }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.topText}>부기와 대화를 통해 이야기를 생성하세요!</Text>
-
-      <ActivityIndicator size="large" color="#3e5d3d" style={{ marginVertical: 10 }} />
-
-      <Image source={require('../assets/boogiwithbook.png')} style={styles.image} />
-
-      <Text style={styles.bottomText}>부기가 이야기를 듣는중 ...</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleFinish}
-      >
-        <Text style={styles.buttonText}>대답 완료</Text>
+    <View style={styles.bg}>
+    {/* 상단 흰색 영역 + 말풍선 (화살표 없음) */}
+    <View style={styles.topWhite}>
+      <View style={styles.bubbleWrap}>
+        <View style={styles.bubble}>
+          <Text style={styles.bubbleText}>... 부기가 이야기를 듣는중 ...</Text>
+        </View>
+      </View>
+    </View>
+    {/* 가운데 배경 이미지 영역 */}
+    <ImageBackground source={require('../assets/num3.png')} style={styles.centerBg}>
+      <View style={styles.container}>
+        {/* 이미지 제거됨 */}
+      </View>
+    </ImageBackground>
+    {/* 하단 흰색 영역 + 버튼 1개 */}
+    <View style={styles.bottomWhite}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MakeStory2')}>
+        <Text style={styles.buttonText}>대답완료</Text>
       </TouchableOpacity>
+    </View>
     </View>
   );
 };
 
-export default AnswerScreen;
-
 const styles = StyleSheet.create({
+  bg: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  topWhite: {
+    width: '100%',
+    height: 90,
+    backgroundColor: '#fff',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  centerBg: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#e8f6cc',
+    width: '100%',
     alignItems: 'center',
+  },
+  bubbleWrap: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 0,
+    marginLeft: 0,
+    marginBottom: 14,
+  },
+  bubble: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: '#4B662B',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    alignItems: 'flex-start',
     justifyContent: 'center',
-    padding: 20,
   },
-  topText: {
-    fontSize: 12,
-    color: '#4a4a4a',
-    marginBottom: 10,
+  bubbleText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#222',
+    textAlign: 'left',
   },
-  image: {
-    width: 180,
-    height: 180,
+  bookImage: {
+    width: 160,
+    height: 120,
     resizeMode: 'contain',
-    marginVertical: 20,
+    marginTop: 12,
+    marginBottom: 0,
   },
-  bottomText: {
-    fontSize: 14,
-    marginBottom: 20,
-    color: '#3e3e3e',
+  boogiImage: {
+    width: 160,
+    height: 160,
+    resizeMode: 'contain',
+    marginTop: -16,
+    marginBottom: 0,
+  },
+  bottomWhite: {
+    width: '100%',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    paddingVertical: 24,
   },
   button: {
     backgroundColor: '#9ACA70',
+    borderRadius: 14,
+    paddingHorizontal: 32,
     paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 12,
+    minWidth: 120,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 8,
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
+    fontSize: 20,
+    letterSpacing: 2,
+    textAlign: 'center',
+    includeFontPadding: false,
+    paddingVertical: 0,
   },
 });
+
+export default AnswerScreen;

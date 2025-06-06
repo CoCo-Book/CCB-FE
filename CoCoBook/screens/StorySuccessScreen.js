@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import ArrowImg from '../assets/arrow.png';
 
 export default function StorySuccessScreen(props) {
   const navigation = useNavigation();
@@ -38,10 +39,10 @@ export default function StorySuccessScreen(props) {
       {/* 하단 회색 영역 + 좌우 화살표 */}
       <View style={styles.bottomBar}>
         <TouchableOpacity style={styles.arrowBtn}>
-          <Text style={styles.arrowIcon}>{'◀'}</Text>
+          <Image source={ArrowImg} style={{ width: 64, height: 64, transform: [{ rotate: '180deg' }], resizeMode: 'contain' }} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.arrowBtn}>
-          <Text style={styles.arrowIcon}>{'▶'}</Text>
+          <Image source={ArrowImg} style={{ width: 64, height: 64, transform: [{ rotate: '0deg' }], resizeMode: 'contain' }} />
         </TouchableOpacity>
       </View>
     </View>
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF8E4',
     borderColor: '#46613B',
     borderWidth: 2,
-    borderRadius: 8,
+    borderRadius: 12,
     paddingVertical: 6,
     paddingHorizontal: 32,
     alignItems: 'center',
@@ -118,12 +119,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   arrowBtn: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#FEF8E4',
-    borderColor: '#24704F',
-    borderWidth: 4,
-    borderRadius: 10,
+    width: 64,
+    height: 64,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 8,

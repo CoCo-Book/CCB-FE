@@ -1,27 +1,42 @@
 // screens/PartialScreen.js
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-const PartialScreen = ({ navigation }) => {
+const images = [
+  require('../assets/partial-1.png'),
+  require('../assets/partial-2.png'),
+  require('../assets/partial-3.png'),
+  require('../assets/partial-4.png'),
+  require('../assets/partial-5.png'),
+];
+
+const StoryPartialScreen = ({ navigation }) => {
+  const [imgIdx, setImgIdx] = useState(0);
+  const [loading, setLoading] = useState(true); // 예시: 로딩 상태
+
+  useEffect(() => {
+    if (!loading) {
+      setImgIdx(images.length - 1); // partial-5로 고정
+      return;
+    }
+    const interval = setInterval(() => {
+      setImgIdx(prev => (prev + 1) % images.length);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [loading]);
+
+  // 예시: 5초 후 로딩 끝 (실제 로딩 완료 시 setLoading(false) 호출)
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <View style={styles.imageWrapper}>
-        <Image
-          source={require('../assets/justroad.png')}
-          style={styles.road}
-        />
-        <Image
-          source={require('../assets/walk2.png')}
-          style={styles.turtle}
-        />
+      <View style={styles.centerImageWrap}>
+        <Image source={images[imgIdx]} style={styles.centerImage} />
       </View>
-
-      <Text style={styles.mainText}>부기가 동화책을 만들고 있어요!</Text>
-      <Text style={styles.subText}>잠시만 기다려주세요</Text>
-
-      {/* 로딩 인디케이터 */}
-      <ActivityIndicator size="large" color="#9ACA70" style={{ marginVertical: 30 }} />
-
+      <Text style={styles.centerText}>부기가 그림을 그리는 중 ...</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('StorySuccess')}
@@ -32,54 +47,46 @@ const PartialScreen = ({ navigation }) => {
   );
 };
 
-export default PartialScreen;
+export default StoryPartialScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e8f6cc',
+    backgroundColor: '#e6f3c2',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 50,
+    paddingTop: 0,
   },
-  imageWrapper: {
-    position: 'relative',
-    width: '100%',
-    height: 300,
+  centerImageWrap: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  road: {
     width: '100%',
-    height: 300,
-    resizeMode: 'contain',
-    position: 'absolute',
   },
-  turtle: {
-    width: 140,
-    height: 140,
+  centerImage: {
+    width: 220,
+    height: 260,
     resizeMode: 'contain',
-    zIndex: 1,
+    marginTop: 40,
+    marginBottom: 0,
   },
-  mainText: {
-    fontSize: 16,
+  centerText: {
+    fontSize: 18,
+    color: '#4B662B',
     fontWeight: 'bold',
-    color: '#333',
-    marginTop: 20,
-  },
-  subText: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 10,
+    textAlign: 'center',
+    marginBottom: 100,
   },
   button: {
     backgroundColor: '#9ACA70',
     paddingVertical: 12,
     paddingHorizontal: 30,
-    borderRadius: 12,
+    borderRadius: 14,
+    marginBottom: 70,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 18,
   },
 });
