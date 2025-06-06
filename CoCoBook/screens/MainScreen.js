@@ -11,7 +11,7 @@ export default function MainScreen() {
         {/* 상단 로고 영역 */}
         <View style={styles.headerSection}>
           <View style={styles.logoRow}>
-            <Image source={require('../assets/book.png')} style={styles.logoImg} />
+            <Image source={require('../assets/boook.png')} style={styles.logoImg} />
             <Text style={styles.logoText}>CoCoBook</Text>
           </View>
         </View>
@@ -53,13 +53,13 @@ export default function MainScreen() {
       {/* 언더바 네비게이션 (연두색 원 배경 제거) */}
       <View style={styles.navbar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('BookShelf')}>
-          <Image source={require('../assets/icon-heart.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_heart.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Main')}>
-          <Image source={require('../assets/icon-home.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_home.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Setting')}>
-          <Image source={require('../assets/icon-setting.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_setting.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
       </View>
     </View>
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     marginTop: 8,
+    position: 'relative',
   },
   speechBubbleSquare: {
     backgroundColor: '#fff',
@@ -146,21 +147,16 @@ const styles = StyleSheet.create({
   speechTailRowLarge: {
     width: 0,
     height: 0,
-    borderLeftWidth: 0,
-    borderRightWidth: 24,
-    borderTopWidth: 24,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#fff',
-    marginLeft: 48,
-    marginTop: -2,
-    borderStyle: 'solid',
-    borderRightWidth: 24,
-    borderTopWidth: 24,
+    borderTopWidth: 14,
+    borderBottomWidth: 14,
+    borderRightWidth: 18,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
     borderRightColor: '#4B6B2F',
-    borderTopColor: '#4B6B2F',
-    borderWidth: 2,
-    borderColor: '#4B6B2F',
+    position: 'absolute',
+    left: -18,
+    top: '50%',
+    transform: [{ translateY: -60 }],
   },
   heroTitle: {
     fontSize: 24,
@@ -179,8 +175,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   storyButton: {
-    backgroundColor: '#A4CD74',
-    borderRadius: 12,
+    backgroundColor: '#9ACA70',
+    borderRadius: 16,
     paddingVertical: 16,
     paddingHorizontal: 24,
     marginTop: 20,
@@ -240,8 +236,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconXLarge: {
-    width: 58,
-    height: 58,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
   },
 });
