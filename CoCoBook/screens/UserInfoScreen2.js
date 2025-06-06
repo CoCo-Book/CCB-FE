@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import ArrowImg from '../assets/arrow.png';
 
 export default function UserInfo2Screen() {
   const navigation = useNavigation();
@@ -78,7 +79,10 @@ export default function UserInfo2Screen() {
       />
 
       <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextArrow}>▶</Text>
+        <Image source={ArrowImg} style={{ width: 64, height: 64, transform: [{ rotate: '0deg' }], resizeMode: 'contain' }} />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.prevButton} onPress={() => navigation.navigate('UserInfo')}>
+        <Image source={ArrowImg} style={{ width: 64, height: 64, transform: [{ rotate: '180deg' }], resizeMode: 'contain' }} />
       </TouchableOpacity>
     </View>
   );
@@ -124,16 +128,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 36,
     right: 24,
-    backgroundColor: '#fdf6cc',
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderWidth: 2,
-    borderColor: '#2f472f',
+    width: 64,
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  nextArrow: {
-    fontSize: 20,
-    color: '#2f472f',
-    fontWeight: 'bold',
+  prevButton: {
+    position: 'absolute',
+    bottom: 36,
+    left: 24,
+    width: 64,
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -26,7 +26,7 @@ export default function SettingScreen() {
         {/* 상단 로고/타이틀 */}
         <View style={styles.headerSection}>
           <View style={styles.logoRow}>
-            <Image source={require('../assets/book.png')} style={styles.logoImg} />
+            <Image source={require('../assets/boook.png')} style={styles.logoImg} />
             <Text style={styles.headerTitle}>내 계정</Text>
           </View>
         </View>
@@ -66,13 +66,13 @@ export default function SettingScreen() {
       {/* 언더바 네비게이션 */}
       <View style={styles.navbar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('BookShelf')}>
-          <Image source={require('../assets/icon-heart.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_heart.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Main')}>
-          <Image source={require('../assets/icon-home.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_home.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Setting')}>
-          <Image source={require('../assets/icon-setting.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_setting.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
       </View>
     </View>
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconXLarge: {
-    width: 58,
-    height: 58,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
   },
 });

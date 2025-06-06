@@ -28,13 +28,13 @@ export default function MembershipScreen() {
 
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate('UserInfo2', { from: 'Setting' })}>
-          <Image source={require('../assets/icon-heart.png')} style={styles.navIconImage} />
+          <Image source={require('../assets/icon_heart.png')} style={styles.navIconImage} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-          <Image source={require('../assets/icon-home.png')} style={styles.navIconImage} />
+          <Image source={require('../assets/icon_home.png')} style={styles.navIconImage} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
-          <Image source={require('../assets/icon-setting.png')} style={styles.navIconImage} />
+          <Image source={require('../assets/icon_setting.png')} style={styles.navIconImage} />
         </TouchableOpacity>
       </View>
     </View>

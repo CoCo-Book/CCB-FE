@@ -16,7 +16,7 @@ export default function BookShelfScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Image source={require('../assets/book.png')} style={styles.emptyBookIcon} />
+      <Image source={require('../assets/boook.png')} style={styles.emptyBookIcon} />
       <Text style={styles.emptyText}>아직 동화책이 없어요</Text>
       <TouchableOpacity style={styles.createButton} onPress={() => navigation.navigate('MakeStory')}>
         <Text style={styles.createButtonText}>동화 만들러 가기</Text>
@@ -52,13 +52,13 @@ export default function BookShelfScreen() {
       {/* 언더바 네비게이션 */}
       <View style={styles.navbar}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('BookShelf')}>
-          <Image source={require('../assets/icon-heart.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_heart.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Main')}>
-          <Image source={require('../assets/icon-home.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_home.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Setting')}>
-          <Image source={require('../assets/icon-setting.png')} style={styles.iconXLarge} />
+          <Image source={require('../assets/icon_setting.png')} style={styles.iconXLarge} />
         </TouchableOpacity>
       </View>
     </View>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderColor: '#4B6B2F',
     borderWidth: 3,
-    borderRadius: 8,
+    borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 32,
     alignItems: 'center',
@@ -169,8 +169,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconXLarge: {
-    width: 58,
-    height: 58,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
   },
 });
