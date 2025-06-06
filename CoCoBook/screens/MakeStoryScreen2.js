@@ -1,6 +1,6 @@
 // screens/MakeStoryScreen2.js
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ImageBackground } from 'react-native';
 import { startRecording } from '../hooks/useRecorder';
 import { playBase64Audio } from '../utils/playBase64Audio';
 
@@ -9,61 +9,32 @@ const MakeStoryScreen2 = ({ navigation, route }) => {
 
   return (
     <View style={styles.bg}>
-    {/* 상단 흰색 영역 + 말풍선 */}
-    <View style={styles.topWhite}>
-      <View style={styles.bubbleWrap}>
-        <View style={styles.bubble}>
-          <Text style={styles.bubbleText}>지금부터 너의 이야기를 들려줄래?</Text>
+      {/* 상단 흰색 영역 + 말풍선 */}
+      <View style={styles.topWhite}>
+        <View style={styles.bubbleWrap}>
+          <View style={styles.bubble}>
+            <Text style={styles.bubbleText}>지금부터 너의 이야기를 들려줄래?</Text>
+          </View>
+          <View style={styles.bubbleArrow} />
         </View>
-        <View style={styles.bubbleArrow} />
       </View>
-    </View>
-
-    {/* 가운데 배경 + 이미지 */}
-    <ImageBackground source={require('../assets/num3.png')} style={styles.centerBg}>
-      <View style={styles.container}>
-        <Text style={styles.topText}>부기와 대화를 통해 이야기를 생성하세요!</Text>
-        <Image
-          source={require('../assets/boogiwithbook.png')}
-          style={styles.image}
-        />
-        <Text style={styles.bottomText}>부기가 말하고 있어요 …</Text>
-      </View>
-    </ImageBackground>
-
-    {/* 하단 버튼 영역 */}
-    <View style={styles.bottomWhite}>
-      <View style={styles.buttonRow}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            await startRecording();
-            navigation.navigate('Answer', {
-              childName: '상아',
-              age: 7,
-              interests: ['공룡', '로봇'],
-            });
-          }}
-        >
-          <Text style={styles.buttonText}>대답하기</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('StoryPartial')}
-        >
-          <Text style={styles.buttonText}>완성하기</Text>
-        </TouchableOpacity>
-
-        {aiResult && (
-          <TouchableOpacity
-            onPress={() => playBase64Audio(aiResult.audio)}
-            style={styles.button}
-          >
-            <Text style={styles.buttonText}>AI 음성 듣기</Text>
+      {/* 가운데 배경 이미지 영역 */}
+      <ImageBackground source={require('../assets/num3.png')} style={styles.centerBg}>
+        <View style={styles.container}>
+          {/* <Image source={require('../assets/book.png')} style={styles.bookImage} /> */}
+          {/* <Image source={require('../assets/boogiwithbook.png')} style={styles.boogiImage} /> */}
+        </View>
+      </ImageBackground>
+      {/* 하단 흰색 영역 + 버튼 2개 */}
+      <View style={styles.bottomWhite}>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Answer')}>
+            <Text style={styles.buttonText}>대답하기</Text>
           </TouchableOpacity>
-        )}
-      </View>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('StoryPartial')}>
+            <Text style={styles.buttonText}>완성하기</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

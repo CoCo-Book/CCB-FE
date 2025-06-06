@@ -1,6 +1,6 @@
 // screens/MakeStoryScreen.js
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ImageBackground } from 'react-native';
 import { fetchJwtToken } from '../utils/getJwtToken';
 import { WS, API } from '../constants';
 import Sound from 'react-native-sound';

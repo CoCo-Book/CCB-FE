@@ -1,7 +1,7 @@
 // screens/AnswerScreen.js
 // screens/AnswerScreen.js
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ImageBackground } from 'react-native';
 import RNFS from 'react-native-fs';
 import { startRecording, stopRecording } from '../hooks/useRecorder';
 import { getPresignedUrl, uploadToS3 } from '../api/s3';
