@@ -1,26 +1,116 @@
-// screens/MakeStoryScreen.js
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { startRecording } from '../hooks/useRecorder';
+import { fetchJwtToken } from '../utils/getJwtToken';
+import { WS, API } from '../constants';
+import Sound from 'react-native-sound';
 
 const MakeStoryScreen = ({ navigation }) => {
-  const handleAnswer = async () => {
-    try {
-      const result = await startRecording();
-      console.log('startRecording 결과:', result);
-      if (result) {
-        navigation.navigate('Answer', {
-          childName: '상아',   // 실제 사용자 입력 값
-          age: 7,             // 실제 사용자 입력 값
-          interests: ['공룡', '로봇'],  // 배열 형태로 넘김
-        });
-      } else {
-        Alert.alert('실패', '녹음이 시작되지 않았습니다.');
+  const ws = useRef(null);
+  const [aiText, setAiText] = useState('서버 연결 중...');
+  const [jwtToken, setJwtToken] = useState(null);
+  const [wsConnected, setWsConnected] = useState(false);
+  const soundRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchAiGreeting = async () => {
+      try {
+        const res = await fetch(`${API.BASE_URL}/api/start`);
+        const data = await res.json();
+        if (isMounted) {
+          setAiText(data.text);
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        }
+        
+        // 음성 파일 재생
+        if (data.audioUrl) {
+          soundRef.current = new Sound(data.audioUrl, '', (error) => {
+            if (error) {
+              console.log('음성 로딩 실패:', error);
+              return;
+            }
+            soundRef.current.play((success) => {
+              if (!success) {
+                console.log('음성 재생 실패');
+              }
+            });
+          });
+        }
+      } catch (e) {
+        // 에러가 나도 5초 동안은 aiText를 바꾸지 않음
       }
-    } catch (e) {
-      console.error('startRecording 에러:', e);
-      Alert.alert('실패', '녹음 시작 중 오류가 발생했습니다.');
+    };
+
+    timeoutRef.current = setTimeout(() => {
+      if (isMounted) {
+        setAiText('서버 연결 실패');
+      }
+    }, 5000);
+
+    fetchAiGreeting();
+
+    return () => {
+      isMounted = false;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (soundRef.current) {
+        soundRef.current.release();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // JWT 토큰 발급
+    const getToken = async () => {
+      const token = await fetchJwtToken();
+      setJwtToken(token);
+    };
+    getToken();
+  }, []);
+
+  useEffect(() => {
+    if (!jwtToken) return;
+    // WebSocket 연결
+    const queryParams = `child_name=상아&age=7&interests=공룡,로봇&token=${jwtToken}`;
+    const wsUrl = `${WS.BASE_URL}?${queryParams}`;
+    ws.current = new WebSocket(wsUrl);
+
+    ws.current.onopen = () => {
+      setWsConnected(true);
+      console.log('✅ MakeStoryScreen WebSocket 연결됨');
+    };
+    ws.current.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      console.log('MakeStoryScreen 서버 응답:', msg);
+      if (msg.type === 'ai_response') {
+        setAiText(msg.text);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      }
+    };
+    ws.current.onerror = (e) => {
+      console.error('MakeStoryScreen WebSocket 에러:', e.message);
+    };
+    ws.current.onclose = () => {
+      setWsConnected(false);
+      console.log('MakeStoryScreen WebSocket 연결 종료');
+    };
+    return () => {
+      if (ws.current) ws.current.close();
+    };
+  }, [jwtToken]);
+
+  const handleAnswer = () => {
+    if (!wsConnected) {
+      Alert.alert('실패', '서버 연결이 아직 완료되지 않았습니다.');
+      return;
     }
+    navigation.navigate('Answer', {
+      childName: '상아',
+      age: 7,
+      interests: ['공룡', '로봇'],
+      jwtToken, // AnswerScreen에 토큰 전달
+    });
   };
 
   return (
@@ -28,7 +118,7 @@ const MakeStoryScreen = ({ navigation }) => {
       <Text style={styles.topText}>부기와 대화를 통해 이야기를 생성하세요!</Text>
       
       <View style={styles.bubble}>
-        <Text style={styles.bubbleText}>지금부터 너의 이야기를 들려줄래?</Text>
+        <Text style={styles.bubbleText}>{aiText}</Text>
       </View>
 
       <Image source={require('../assets/boogiwithbook.png')} style={styles.image} />

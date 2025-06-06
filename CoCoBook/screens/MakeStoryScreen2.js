@@ -2,8 +2,11 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { startRecording } from '../hooks/useRecorder';
+import { playBase64Audio } from '../utils/playBase64Audio';
 
-const MakeStoryScreen2 = ({ navigation }) => {
+const MakeStoryScreen2 = ({ navigation, route }) => {
+  const aiResult = route.params?.aiResult;
+
   return (
     <View style={styles.container}>
       <Text style={styles.topText}>부기와 대화를 통해 이야기를 생성하세요!</Text>
@@ -13,7 +16,7 @@ const MakeStoryScreen2 = ({ navigation }) => {
         style={styles.image}
       />
 
-      <Text style={styles.bottomText}>부기가 이야기를 듣는중 …</Text>
+      <Text style={styles.bottomText}>부기가 말하고 있어요 …</Text>
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -36,6 +39,15 @@ const MakeStoryScreen2 = ({ navigation }) => {
         >
           <Text style={styles.buttonText}>대화종료</Text>
         </TouchableOpacity>
+
+        {aiResult && (
+          <TouchableOpacity
+            onPress={() => playBase64Audio(aiResult.audio)}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>AI 음성 듣기</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
