@@ -21,6 +21,12 @@ const AnswerScreen = ({ navigation, route }) => {
   // childName, age, interests, jwtToken은 route.params에서 받음. jwtToken이 없으면 fetch해서 사용
   const { childName, age, interests, jwtToken: routeJwtToken } = route.params || {};
   const [jwtToken, setJwtToken] = useState(routeJwtToken || null);
+  const [pendingFinish, setPendingFinish] = useState(false);
+
+  // 아래처럼 기본값을 할당
+  const childName_ = childName ?? "상아";
+  const age_ = age ?? 7;
+  const interests_ = interests ?? ["공룡", "로봇"];
 
   // JWT 토큰이 없으면 fetch
   useEffect(() => {
@@ -34,14 +40,14 @@ const AnswerScreen = ({ navigation, route }) => {
 
    // WebSocket 연결
    useEffect(() => {
-    if (!jwtToken || !childName || !age || !interests) return;
-    const queryParams = `child_name=${encodeURIComponent(childName)}&age=${age}&interests=${encodeURIComponent(interests.join(','))}&token=${jwtToken}`;
-    const wsUrl = `${WS.BASE_URL}?${queryParams}`;
-    ws.current = new WebSocket(wsUrl);
+    console.log('params:', { childName: childName_, age: age_, interests: interests_, jwtToken });
+    if (!jwtToken || !childName_ || !age_ || !interests_) return;
+    const queryParams = `child_name=${encodeURIComponent(childName_)}&age=${age_}&interests=${encodeURIComponent(Array.isArray(interests_) ? interests_.join(',') : interests_)}&token=${jwtToken}`;
+    ws.current = new WebSocket(`${WS.BASE_URL}?${queryParams}`);
 
     ws.current.onopen = () => {
-      setStatus('connected');
       console.log('✅ WebSocket 연결됨');
+      setStatus('connected');
     };
     ws.current.onmessage = async (event) => {
       const msg = JSON.parse(event.data);
@@ -75,17 +81,17 @@ const AnswerScreen = ({ navigation, route }) => {
       }
     };
     ws.current.onerror = (e) => {
+      console.error('WebSocket 에러:', e);
       setStatus('error');
-      console.error('WebSocket 에러:', e.message);
     };
-    ws.current.onclose = () => {
+    ws.current.onclose = (e) => {
+      console.log('WebSocket 연결 종료', e);
       setStatus('closed');
-      console.log('WebSocket 연결 종료');
     };
     return () => {
       if (ws.current) ws.current.close();
     };
-  }, [jwtToken, childName, age, interests]);
+  }, [jwtToken, childName_, age_, interests_]);
 
   useEffect(() => {
     const start = async () => {
@@ -109,28 +115,48 @@ const AnswerScreen = ({ navigation, route }) => {
       Alert.alert('실패', '녹음이 시작되지 않았습니다.');
       return;
     }
+    if (!ws.current || ws.current.readyState !== 1) {
+      Alert.alert('실패', '서버와 연결 중입니다. 잠시 후 다시 시도해 주세요.');
+      setPendingFinish(true);
+      return;
+    }
     const path = await stopRecording();
     setIsRecording(false);
     if (!path || path === 'Already stopped') {
       Alert.alert('실패', '녹음 파일 경로를 가져오지 못했습니다.');
       return;
     }
+
+    // WebSocket 연결 상태 체크
+    console.log('handleFinish ▶ ws.current:', ws.current);
+    console.log('handleFinish ▶ readyState:', ws.current?.readyState);
+    if (!ws.current || ws.current.readyState !== 1) {
+      Alert.alert('실패', '서버와 연결되어 있지 않습니다. 잠시 후 다시 시도해 주세요.');
+      return;
+    }
+
     try {
-      const base64String = await RNFS.readFile(path, 'base64');
-      // audio_chunk 메시지로 서버에 전송
-      ws.current.send(
-        JSON.stringify({
-          type: 'audio_chunk',
-          data: base64String,
-          chunk_index: 1, // 단일 chunk라면 1
-          is_final: true,
-        })
-      );
-      console.log('음성 데이터가 서버로 전송되었습니다.');
+      // 1. 파일 경로 수정
+      const correctedPath = path.replace('file:////', 'file:///');
+
+      // 2. 파일을 base64로 읽기
+      const audioBase64 = await RNFS.readFile(correctedPath, 'base64');
+
+      // 3. base64를 바이너리로 변환
+      const binaryString = atob(audioBase64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      // 4. WebSocket으로 바이너리 전송
+      ws.current.send(bytes.buffer);
+
+      console.log('[부기] 음성 파일 바이너리 전송 완료:', bytes.length, 'bytes', '경로:', correctedPath);
       navigation.navigate('MakeStory2');
     } catch (err) {
-      console.error('🔴 파일을 Base64로 읽기 실패:', err);
-      Alert.alert('실패', '파일을 읽는 데 실패했습니다.');
+      console.error('🔴 음성 파일 전송 실패:', err);
+      Alert.alert('실패', '파일을 읽거나 전송하는 데 실패했습니다.');
     }
   };
 
@@ -174,6 +200,22 @@ const AnswerScreen = ({ navigation, route }) => {
     };
   }, []);
 
+  // WebSocket 연결이 열릴 때 pendingFinish가 true면 자동 실행
+  useEffect(() => {
+    if (ws.current) {
+      ws.current.onopen = () => {
+        setStatus('connected');
+        console.log('✅ WebSocket 연결됨');
+        if (pendingFinish) {
+          setPendingFinish(false);
+          handleFinish();
+        }
+      };
+    }
+  }, [pendingFinish]);
+
+  const isWsOpen = ws.current && ws.current.readyState === 1;
+
   return (
     <View style={styles.bg}>
     {/* 상단 흰색 영역 + 말풍선 (화살표 없음) */}
@@ -192,7 +234,10 @@ const AnswerScreen = ({ navigation, route }) => {
     </ImageBackground>
     {/* 하단 흰색 영역 + 버튼 1개 */}
     <View style={styles.bottomWhite}>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MakeStory2')}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleFinish}
+      >
         <Text style={styles.buttonText}>대답완료</Text>
       </TouchableOpacity>
     </View>

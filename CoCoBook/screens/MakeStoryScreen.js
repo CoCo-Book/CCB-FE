@@ -74,8 +74,7 @@ const MakeStoryScreen = ({ navigation }) => {
     if (!jwtToken) return;
     // WebSocket 연결
     const queryParams = `child_name=상아&age=7&interests=공룡,로봇&token=${jwtToken}`;
-    const wsUrl = `${WS.BASE_URL}?${queryParams}`;
-    ws.current = new WebSocket(wsUrl);
+    ws.current = new WebSocket(`${WS.BASE_URL}?${queryParams}`);
 
     ws.current.onopen = () => {
       setWsConnected(true);
@@ -120,7 +119,7 @@ const MakeStoryScreen = ({ navigation }) => {
       <View style={styles.topWhite}>
         <View style={styles.bubbleWrap}>
           <View style={styles.bubble}>
-            <Text style={styles.bubbleText}>안녕 나는 부기라고 해!</Text>
+            <Text style={styles.bubbleText}>{aiText}</Text>
           </View>
           <View style={{ overflow: 'hidden', borderRadius: 10 }}>
             <View style={styles.bubbleArrow} />
@@ -161,14 +160,15 @@ const styles = StyleSheet.create({
   centerBg: {
     flex: 1,
     width: '100%',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   container: {
     flex: 1,
     width: '100%',
     alignItems: 'center',
-  },
+    justifyContent: 'center',
+  }, 
   bubbleWrap: {
     width: '100%',
     alignItems: 'center',
