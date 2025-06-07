@@ -14,6 +14,8 @@ const MakeStoryScreen = ({ navigation }) => {
   const timeoutRef = useRef(null);
 
   useEffect(() => {
+    // ❌ 제거: 존재하지 않는 엔드포인트 호출
+    /*
     let isMounted = true;
 
     const fetchAiGreeting = async () => {
@@ -59,12 +61,21 @@ const MakeStoryScreen = ({ navigation }) => {
         soundRef.current.release();
       }
     };
+    */
+    
+    // ✅ WebSocket 연결만으로 초기 인사 받기 (이미 구현되어 있음)
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.release();
+      }
+    };
   }, []);
 
   useEffect(() => {
     // JWT 토큰 발급
     const getToken = async () => {
       const token = await fetchJwtToken();
+      console.log('🔍 MakeStoryScreen 토큰 확인:', token);
       setJwtToken(token);
     };
     getToken();
@@ -72,29 +83,28 @@ const MakeStoryScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!jwtToken) return;
-    // WebSocket 연결
-    const queryParams = `child_name=상아&age=7&interests=공룡,로봇&token=${jwtToken}`;
-    ws.current = new WebSocket(`${WS.BASE_URL}?${queryParams}`);
+    
+    // WebSocket 연결해서 초기 인사 받기
+    const wsUrl = `${WS.BASE_URL}?child_name=${encodeURIComponent('상아')}&age=7&interests=${encodeURIComponent('공룡,로봇')}&token=${jwtToken}`;
+    ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
       setWsConnected(true);
       console.log('✅ MakeStoryScreen WebSocket 연결됨');
     };
+    
     ws.current.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      console.log('MakeStoryScreen 서버 응답:', msg);
-      if (msg.type === 'ai_response') {
+      if (msg.type === 'ai_response' && !msg.user_text) {
+        // 초기 인사 메시지 처리
         setAiText(msg.text);
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        console.log('🎉 초기 인사 받음:', msg.text);
+        
+        // 초기 인사 받으면 WebSocket 닫기 (AnswerScreen에서 새로 연결)
+        ws.current.close();
       }
     };
-    ws.current.onerror = (e) => {
-      console.error('MakeStoryScreen WebSocket 에러:', e.message);
-    };
-    ws.current.onclose = () => {
-      setWsConnected(false);
-      console.log('MakeStoryScreen WebSocket 연결 종료');
-    };
+    
     return () => {
       if (ws.current) ws.current.close();
     };

@@ -3,9 +3,71 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ImageBackground } from 'react-native';
 import { startRecording } from '../hooks/useRecorder';
 import { playBase64Audio } from '../utils/playBase64Audio';
+import { API } from '../constants';
+import Sound from 'react-native-sound';
 
 const MakeStoryScreen2 = ({ navigation, route }) => {
   const aiResult = route.params?.aiResult;
+  const [aiText, setAiText] = useState('부기가 답변을 준비 중이에요...');
+  const soundRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  // AI 응답 텍스트 설정
+  useEffect(() => {
+    if (aiResult) {
+      // AnswerScreen에서 받은 AI 응답이 있으면 사용
+      console.log('✅ AnswerScreen에서 받은 AI 응답:', aiResult);
+      setAiText(aiResult);
+    } else {
+      // 처음 진입 시 서버에서 기본 메시지 받기
+      fetchDefaultMessage();
+    }
+  }, [aiResult]);
+
+  const fetchDefaultMessage = async () => {
+    // ✅ 기본 메시지 설정
+    if (!aiResult) {
+      setAiText('지금부터 너의 이야기를 들려줄래?');
+    }
+  };
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (soundRef.current) {
+        soundRef.current.release();
+      }
+    };
+  }, []);
+
+  const handleAnswer = async () => {
+    try {
+      console.log('🎤 MakeStoryScreen2에서 녹음 시작');
+      const result = await startRecording();
+      
+      if (result && result.path) {
+        console.log('✅ 녹음 시작 성공:', result);
+        console.log('📁 녹음 파일 경로:', result.path);
+        console.log('📝 파일명:', result.fileName);
+        
+        navigation.navigate('Answer', {
+          childName: '상아',
+          age: 7,
+          interests: ['공룡', '로봇'],
+          recordingStarted: true,
+          recordingPath: result.path,      // 녹음 파일 경로 전달
+          recordingFileName: result.fileName // 파일명 전달
+        });
+      } else {
+        console.error('🔴 녹음 시작 실패: result가 null');
+        Alert.alert('실패', '녹음을 시작할 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('🔴 녹음 시작 에러:', error);
+      Alert.alert('실패', '녹음을 시작하는 데 실패했습니다.');
+    }
+  };
 
   return (
     <View style={styles.bg}>
@@ -13,7 +75,7 @@ const MakeStoryScreen2 = ({ navigation, route }) => {
       <View style={styles.topWhite}>
         <View style={styles.bubbleWrap}>
           <View style={styles.bubble}>
-            <Text style={styles.bubbleText}>지금부터 너의 이야기를 들려줄래?</Text>
+            <Text style={styles.bubbleText}>{aiText}</Text>
           </View>
           <View style={styles.bubbleArrow} />
         </View>
@@ -28,7 +90,7 @@ const MakeStoryScreen2 = ({ navigation, route }) => {
       {/* 하단 흰색 영역 + 버튼 2개 */}
       <View style={styles.bottomWhite}>
         <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Answer')}>
+          <TouchableOpacity style={styles.button} onPress={handleAnswer}>
             <Text style={styles.buttonText}>대답하기</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('StoryPartial')}>
