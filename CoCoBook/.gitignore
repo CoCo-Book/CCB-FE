@@ -118,3 +118,5 @@ android/**/compile_commands.json
 android/**/CMakeFiles/
 android/**/build/.bundle/
 CoCoBook/android/app/src/main/res/values/strings.xml
+ios/
+build/
