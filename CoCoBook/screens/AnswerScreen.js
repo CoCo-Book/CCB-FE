@@ -149,9 +149,16 @@ const AnswerScreen = ({ navigation, route }) => {
           console.error('서버 에러:', msg.error_message, '코드:', msg.error_code);
           setAiText(`에러: ${msg.error_message}`);
         } else if (msg.type === 'conversation_end') {
-          // 대화 종료
+          // 대화 종료 처리
           console.log('대화 종료:', msg.message);
-          setAiText('대화가 완료되었습니다.');
+          setAiText(msg.message || msg.text || '대화가 완료되었습니다.');
+          
+          // 2초 후 MakeStoryScreen2로 이동
+          setTimeout(() => {
+            navigation.navigate('MakeStory2', {
+              aiResult: msg.message || msg.text || '재미있는 이야기를 만들어볼게요!'
+            });
+          }, 2000);
         } else {
           console.log('알 수 없는 메시지 타입:', msg.type);
         }

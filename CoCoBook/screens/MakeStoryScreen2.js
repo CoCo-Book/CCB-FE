@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, ImageBackground } from 'react-native';
 import { startRecording } from '../hooks/useRecorder';
 import { playBase64Audio } from '../utils/playBase64Audio';
-import { API } from '../constants';
+import { API, WS } from '../constants';
+import { fetchJwtToken } from '../utils/getJwtToken';
 import Sound from 'react-native-sound';
 
 const MakeStoryScreen2 = ({ navigation, route }) => {
@@ -11,6 +12,22 @@ const MakeStoryScreen2 = ({ navigation, route }) => {
   const [aiText, setAiText] = useState('부기가 답변을 준비 중이에요...');
   const soundRef = useRef(null);
   const timeoutRef = useRef(null);
+  const ws = useRef(null);
+  const [jwtToken, setJwtToken] = useState(null);
+
+  // 기본 프로필 정보
+  const childName = '상아';
+  const age = 7;
+  const interests = ['허니브레드', '요리'];
+
+  // JWT 토큰 가져오기
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await fetchJwtToken();
+      setJwtToken(token);
+    };
+    getToken();
+  }, []);
 
   // AI 응답 텍스트 설정
   useEffect(() => {
@@ -69,6 +86,67 @@ const MakeStoryScreen2 = ({ navigation, route }) => {
     }
   };
 
+  const handleComplete = async () => {
+    if (!jwtToken) {
+      Alert.alert('실패', 'JWT 토큰이 없습니다.');
+      return;
+    }
+
+    try {
+      console.log('📤 스토리 완성 요청 시작');
+      setAiText('이야기를 완성하고 있습니다. 잠시만 기다려주세요...');
+
+      // 1. WebSocket으로 conversation_finish 메시지 전송 (선택사항)
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify({type: "conversation_finish"}));
+        console.log('✅ WebSocket conversation_finish 메시지 전송');
+      }
+
+      // 2. API 호출로 스토리 생성 요청
+      console.log('📤 스토리 생성 API 호출');
+      const storyResponse = await fetch(`http://52.78.92.115:8001/api/v1/stories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`
+        },
+        body: JSON.stringify({
+          child_profile: {
+            name: childName,
+            age: age,
+            interests: interests,
+            language_level: "basic"
+          }
+        })
+      });
+
+      console.log('📊 API 응답 상태:', storyResponse.status);
+
+      if (storyResponse.ok) {
+        const storyData = await storyResponse.json();
+        console.log('✅ 스토리 생성 요청 성공:', storyData);
+        setAiText('이야기가 완성되었습니다! 곧 보여드릴게요.');
+        
+        // StoryPartial로 이동
+        setTimeout(() => {
+          navigation.navigate('StoryPartial', {
+            storyData: storyData
+          });
+        }, 2000);
+      } else {
+        const errorText = await storyResponse.text();
+        console.log('❌ 스토리 생성 API 실패:', storyResponse.status, errorText);
+        Alert.alert('실패', '스토리 생성에 실패했습니다.');
+        setAiText('스토리 생성에 실패했습니다. 다시 시도해주세요.');
+      }
+
+    } catch (error) {
+      console.error('❌ 스토리 완성 요청 실패:', error);
+      Alert.alert('실패', '스토리 완성 요청에 실패했습니다.');
+      setAiText('요청에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   return (
     <View style={styles.bg}>
       {/* 상단 흰색 영역 + 말풍선 */}
@@ -93,7 +171,7 @@ const MakeStoryScreen2 = ({ navigation, route }) => {
           <TouchableOpacity style={styles.button} onPress={handleAnswer}>
             <Text style={styles.buttonText}>대답하기</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('StoryPartial')}>
+          <TouchableOpacity style={styles.button} onPress={handleComplete}>
             <Text style={styles.buttonText}>완성하기</Text>
           </TouchableOpacity>
         </View>
