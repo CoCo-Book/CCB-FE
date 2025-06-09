@@ -6,9 +6,9 @@ export const API = {
 };
 
 export const WS = {
-  BASE_URL: 'ws://52.78.92.115:8000/ws/audio',
-  TEST_URL: 'ws://52.78.92.115:8000/ws/test',
-  BINARY_TEST_URL: 'ws://52.78.92.115:8000/ws/binary-test'
+  BASE_URL: 'ws://52.78.92.115/ws/audio',
+  TEST_URL: 'ws://52.78.92.115/ws/test',
+  BINARY_TEST_URL: 'ws://52.78.92.115/ws/binary-test'
 };
 
 export const S3 = {

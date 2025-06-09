@@ -9,6 +9,8 @@ import { API, WS } from '../constants';
 import { fetchJwtToken } from '../utils/getJwtToken';
 import Sound from 'react-native-sound';
 import { Buffer } from 'buffer';
+// ❌ AudioRecorderPlayer 제거 - AnswerScreen에서는 오디오 재생 안함
+// import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
 Sound.setCategory('Playback');
 
@@ -17,8 +19,8 @@ const AnswerScreen = ({ navigation, route }) => {
   const [status, setStatus] = useState('connecting');
   const [isRecording, setIsRecording] = useState(false);
   const [aiText, setAiText] = useState('서버 연결 중...');
-  const [greetingLoaded, setGreetingLoaded] = useState(false);
   const soundRef = useRef(null);
+  // ❌ audioRecorderPlayerRef 제거 - AnswerScreen에서는 오디오 재생 안함
   // childName, age, interests, jwtToken은 route.params에서 받음. jwtToken이 없으면 fetch해서 사용
   const { childName, age, interests, jwtToken: routeJwtToken, recordingStarted } = route.params || {};
   const [jwtToken, setJwtToken] = useState(routeJwtToken || null);
@@ -28,6 +30,27 @@ const AnswerScreen = ({ navigation, route }) => {
   const childName_ = childName ?? "상아";
   const age_ = age ?? 7;
   const interests_ = interests ?? ["공룡", "로봇"];
+
+  // ❌ TTS 오디오 재생 비활성화 (AnswerScreen에서는 오디오 없음)
+  const playTTSAudio = async (text) => {
+    console.log('🔇 AnswerScreen TTS 비활성화됨 - 텍스트만 표시:', text);
+    // AnswerScreen에서는 오디오 재생하지 않음
+    return;
+  };
+
+  // ❌ 서버 오디오 재생 비활성화 (AnswerScreen에서는 오디오 없음)
+  const playServerAudio = async (base64Audio) => {
+    console.log('🔇 AnswerScreen 서버 오디오 비활성화됨 - 오디오 무시');
+    // AnswerScreen에서는 서버 오디오도 재생하지 않음
+    return;
+  };
+
+  // 오디오 정지 함수 (사용되지 않지만 호환성 유지)
+  const stopAudio = async () => {
+    console.log('🔇 AnswerScreen 오디오 정지 (비활성화됨)');
+    // AnswerScreen에서는 오디오 기능 자체가 비활성화됨
+    return;
+  };
 
   // JWT 토큰이 없으면 fetch
   useEffect(() => {
@@ -74,7 +97,26 @@ const AnswerScreen = ({ navigation, route }) => {
         console.log('서버 응답 받음:', msg);
 
         // API 문서에 따른 응답 처리
-        if (msg.type === 'ai_response') {
+        if (msg.type === 'status') {
+          // 연결 상태 메시지 처리
+          if (msg.status === 'partial') {
+            console.log('⏳ 서버 준비 중:', msg.message);
+            setAiText(msg.message);
+            
+            // 🔇 AnswerScreen에서는 오디오 재생 안함 - 텍스트만 표시
+            if (msg.audio) {
+              console.log('🔇 서버 오디오 무시됨 (AnswerScreen)');
+            }
+          } else if (msg.status === 'connected') {
+            console.log('✅ 서버 연결 완료:', msg.message);
+            setAiText(msg.message);
+            
+            // 🔇 AnswerScreen에서는 오디오 재생 안함 - 텍스트만 표시
+            if (msg.audio) {
+              console.log('🔇 서버 오디오 무시됨 (AnswerScreen)');
+            }
+          }
+        } else if (msg.type === 'ai_response' || msg.type === 'conversation_response') {
           // ✅ 사용자 음성이 있는 응답만 처리 (초기 인사 메시지 제외)
           if (msg.user_text) {
             // AI 응답 처리
@@ -82,56 +124,16 @@ const AnswerScreen = ({ navigation, route }) => {
             console.log('AI 응답:', msg.text);
             console.log('사용자 음성 인식:', msg.user_text);
             console.log('신뢰도:', msg.confidence);
+            console.log('오디오 방식:', msg.audio_method);
 
-            // Base64 오디오 재생
-            if (msg.audio) {
-              try {
-                const path = `${RNFS.CachesDirectoryPath}/ai_response_audio.mp3`;
-                await RNFS.writeFile(path, msg.audio, 'base64');
-                if (soundRef.current) soundRef.current.release();
-                soundRef.current = new Sound(path, '', (error) => {
-                  if (error) {
-                    console.log('음성 로딩 실패:', error);
-                    return;
-                  }
-                  console.log('음성 로딩 성공, 재생 시작');
-                  soundRef.current.play((success) => {
-                    if (success) {
-                      console.log('음성 재생 성공');
-                      // ✅ 음성 재생 완료 후 MakeStoryScreen2로 돌아가기
-                      setTimeout(() => {
-                        navigation.navigate('MakeStory2', {
-                          aiResult: msg.text // AI 응답 전달
-                        });
-                      }, 1000); // 1초 후 네비게이트
-                    } else {
-                      console.log('음성 재생 실패');
-                      // 재생 실패해도 네비게이트
-                      setTimeout(() => {
-                        navigation.navigate('MakeStory2', {
-                          aiResult: msg.text
-                        });
-                      }, 1000);
-                    }
-                  });
-                });
-              } catch (e) {
-                console.log('오디오 저장/재생 실패:', e);
-                // 오디오 실패해도 네비게이트
-                setTimeout(() => {
-                  navigation.navigate('MakeStory2', {
-                    aiResult: msg.text
-                  });
-                }, 1000);
-              }
-            } else {
-              // 오디오가 없어도 네비게이트
-              setTimeout(() => {
-                navigation.navigate('MakeStory2', {
-                  aiResult: msg.text
-                });
-              }, 1000);
-            }
+            // ✅ 전체 서버 응답을 MakeStoryScreen2로 전달
+            setTimeout(() => {
+              navigation.navigate('MakeStory2', {
+                serverResponse: msg, // 전체 서버 응답 전달 (text, audio, user_text, audio_method 등 모두 포함)
+                aiResult: msg.text, // 기존 호환성 유지
+                jwtToken: jwtToken // JWT 토큰 전달
+              });
+            }, 1000); // 1초 후 네비게이트
           } else {
             // 초기 인사 메시지는 무시
             console.log('🔇 초기 인사 메시지 무시:', msg.text);
@@ -150,17 +152,43 @@ const AnswerScreen = ({ navigation, route }) => {
           setAiText(`에러: ${msg.error_message}`);
         } else if (msg.type === 'conversation_end') {
           // 대화 종료 처리
-          console.log('대화 종료:', msg.message);
+          console.log('📍 대화 종료:', msg.message || msg.text);
           setAiText(msg.message || msg.text || '대화가 완료되었습니다.');
           
           // 2초 후 MakeStoryScreen2로 이동
           setTimeout(() => {
             navigation.navigate('MakeStory2', {
-              aiResult: msg.message || msg.text || '재미있는 이야기를 만들어볼게요!'
+              aiResult: msg.message || msg.text || '재미있는 이야기를 만들어볼게요!',
+              jwtToken: jwtToken // JWT 토큰 전달
             });
           }, 2000);
+        } else if (msg.type === 'story_id_assigned') {
+          // 동화 생성 시작
+          console.log('📚 동화 생성 시작:', msg.story_id);
+          setAiText(msg.message || '동화를 만들고 있어요! 잠시만 기다려주세요...');
+        } else if (msg.type === 'orchestrator_story_started') {
+          // WorkflowOrchestrator 시작
+          console.log('🎬 동화 제작 시작:', msg.message);
+          setAiText(msg.message || '동화 제작이 시작되었어요!');
+        } else if (msg.type === 'orchestrator_story_completed') {
+          // WorkflowOrchestrator 완료
+          console.log('🎉 동화 완성!:', msg.message);
+          setAiText(msg.message || '동화가 완성되었어요!');
+          
+          // MakeStoryScreen2로 이동하여 완성된 동화 확인
+          setTimeout(() => {
+            navigation.navigate('MakeStory2', {
+              aiResult: msg.message || '동화가 완성되었어요! 함께 읽어볼까요?',
+              storyCompleted: true,
+              storyId: msg.story_id,
+              jwtToken: jwtToken // JWT 토큰 전달
+            });
+          }, 2000);
+        } else if (msg.type === 'ping') {
+          // Keep-alive ping 처리
+          console.log('🏓 ping 메시지 수신');
         } else {
-          console.log('알 수 없는 메시지 타입:', msg.type);
+          console.log('📄 알 수 없는 메시지 타입:', msg.type, msg);
         }
       } catch (e) {
         console.log('메시지 파싱 실패:', event.data, e);
@@ -237,18 +265,24 @@ const AnswerScreen = ({ navigation, route }) => {
 
       // ✅ 전송 전 상세 로그
       console.log('📤 음성 데이터 전송 시작');
-      console.log('📍 전송 대상 서버:', '13.124.141.8:8000');
+      console.log('📍 전송 대상 서버:', '52.78.92.115:8000');
       console.log('🛣️ WebSocket 엔드포인트:', '/ws/audio');
       console.log('📦 전송 데이터 크기:', buffer.length, 'bytes');
       console.log('⏰ 전송 시간:', new Date().toISOString());
 
       // 4. WebSocket으로 바이너리 전송
       ws.current.send(buffer);
+      console.log('✅ 1단계: 바이너리 오디오 데이터 전송 완료');
 
-      console.log('✅ 음성 파일 바이너리 전송 완료!');
+      // 5. 바이너리 전송 후 audio_end 신호 전송 (JSON 문자열)
+      const audioEndSignal = JSON.stringify({"type": "audio_end"});
+      ws.current.send(audioEndSignal);
+      console.log('✅ 2단계: audio_end 신호 전송 완료');
+
       console.log('📊 전송 요약:');
-      console.log('  - 서버: 13.124.141.8:8000/ws/audio');
-      console.log('  - 크기:', buffer.length, 'bytes');
+      console.log('  - 서버: 52.78.92.115:8000/ws/audio');
+      console.log('  - 바이너리 크기:', buffer.length, 'bytes');
+      console.log('  - audio_end 신호: 전송됨');
       console.log('  - 파일:', correctedPath);
       
       // ✅ 서버 응답 대기 상태 표시
@@ -272,39 +306,14 @@ const AnswerScreen = ({ navigation, route }) => {
       if (soundRef.current) {
         soundRef.current.release();
       }
+      // ❌ 오디오 관련 정리 제거 - AnswerScreen에서는 오디오 기능 없음
+      // stopAudio();
+      // RNFS.unlink(`${RNFS.DocumentDirectoryPath}/server_audio_answer.mp3`).catch(() => {});
     };
   }, []);
 
-  useEffect(() => {
-    let timeoutId = null;
-    let isMounted = true;
-
-    const fetchAiGreeting = async () => {
-      try {
-        const res = await fetch(`${API.BASE_URL}/api/start`);
-        const data = await res.json();
-        if (isMounted && !greetingLoaded) {
-          setGreetingLoaded(true);
-          setAiText(data.text);
-        }
-      } catch (e) {
-        // 에러가 나도 5초 동안은 aiText를 바꾸지 않음
-      }
-    };
-
-    timeoutId = setTimeout(() => {
-      if (isMounted && !greetingLoaded) {
-        setAiText('서버 연결 실패');
-      }
-    }, 5000);
-
-    fetchAiGreeting();
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timeoutId);
-    };
-  }, []);
+  // ❌ 제거: /api/start 엔드포인트 호출 불필요
+  // WebSocket 연결만으로 모든 통신 처리
 
   // WebSocket 연결이 열릴 때 pendingFinish가 true면 자동 실행
   useEffect(() => {
@@ -332,12 +341,13 @@ const AnswerScreen = ({ navigation, route }) => {
         </View>
       </View>
     </View>
-    {/* 가운데 배경 이미지 영역 */}
-    <ImageBackground source={require('../assets/num3.png')} style={styles.centerBg}>
+    {/* 가운데 영역 */}
+    <View style={styles.centerBg}>
+      {/* 작은 이미지를 컨테이너 안에 배치 */}
       <View style={styles.container}>
-        {/* 이미지 제거됨 */}
+        <Image source={require('../assets/num3.png')} style={styles.smallImage} />
       </View>
-    </ImageBackground>
+    </View>
     {/* 하단 흰색 영역 + 버튼 1개 */}
     <View style={styles.bottomWhite}>
       <TouchableOpacity
@@ -358,21 +368,34 @@ const styles = StyleSheet.create({
   },
   topWhite: {
     width: '100%',
-    height: 90,
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingVertical: 20, // 위아래 여백
+    paddingBottom: 5, // 이미지와 거리
+    minHeight: 80, // 최소 높이
+    maxHeight: 200, // 최대 높이 (너무 길어지는 것 방지)
   },
   centerBg: {
     flex: 1,
     width: '100%',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff', // 배경색 추가
+  },
+  smallImage: {
+    width: 300,
+    height: 300,
+    resizeMode: 'cover', // 이미지를 잘라서 정사각형에 맞춤
+    borderRadius: 20, // 모서리 둥글게
+    marginVertical: 0, // 위아래 여백 완전 제거
   },
   container: {
     flex: 1,
     width: '100%',
     alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1, // 이미지 위에 표시
   },
   bubbleWrap: {
     width: '100%',
@@ -387,16 +410,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 3,
     borderColor: '#4B662B',
-    paddingVertical: 14,
+    paddingVertical: 16,
     paddingHorizontal: 24,
     alignItems: 'flex-start',
     justifyContent: 'center',
+    minHeight: 50, // 최소 높이
   },
   bubbleText: {
     fontWeight: 'bold',
     fontSize: 16,
     color: '#222',
     textAlign: 'left',
+    lineHeight: 22, // 줄 간격
+    flexWrap: 'wrap', // 텍스트 줄바꿈
   },
   bookImage: {
     width: 160,
@@ -416,7 +442,8 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingTop: 5, // 이미지와 버튼 거리 더 줄이기
+    paddingBottom: 24,
   },
   button: {
     backgroundColor: '#9ACA70',
